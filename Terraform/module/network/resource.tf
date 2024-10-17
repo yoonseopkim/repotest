@@ -12,9 +12,10 @@ resource "aws_subnet" "public" {
   vpc_id            = aws_vpc.gitfolio.id
   cidr_block        = var.public_subnet_cidrs[count.index]
   availability_zone = data.aws_availability_zones.selected.names[0]
+  map_public_ip_on_launch = true
   
   tags = {
-    Name = count.index == 0 ? "Dev Load Balancer subnet" : "Dev NAT subnet"
+    Name = count.index == 0 ? "Gitfolio Load Balancer subnet" : "Gitfolio NAT subnet"
   }
 }
 
@@ -25,27 +26,31 @@ resource "aws_subnet" "private" {
   availability_zone = data.aws_availability_zones.selected.names[count.index % 2]
   
   tags = {
-    Name = "Dev ${var.instance_names[count.index]} subnet"
+    Name = "Gitfolio ${var.instance_names[count.index]} subnet"
   }
+}
+
+resource "aws_eip" "nat_eip" {
+  domain = "vpc"
 }
 
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.gitfolio.id
 
   tags = {
-    Name = "Dev Internet Gateway"
+    Name = "Gitfolio Internet Gateway"
   }
 }
 
 resource "aws_nat_gateway" "nat" {
-  allocation_id = data.aws_eip.nat.id
+  allocation_id = aws_eip.nat_eip.id
   subnet_id = aws_subnet.public[1].id
 
   tags = {
-    Name = "Dev NAT Gateway"
+    Name = "Gitfolio NAT Gateway"
   }
 
-  depends_on = [ aws_internet_gateway.igw ]
+  depends_on = [ aws_eip.nat_eip, aws_internet_gateway.igw ]
 }
 
 resource "aws_route_table" "public" {

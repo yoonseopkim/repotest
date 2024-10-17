@@ -13,17 +13,12 @@ variable "private_subnet_cidrs" {
   type        = list(string)
 }
 
-variable "elastic_ip_names" {
-  description = "Elastic IPs for public subnets"
-  type        = map(string)
+variable "any_ip" {
+  description = "IP address for anywhere"
+  type        = string
 }
 
 variable "instance_names" {
   description = "EC2 instance name"
   type        = list(string)
-}
-
-variable "any_ip" {
-  description = "IP address for anywhere"
-  type        = string
 }

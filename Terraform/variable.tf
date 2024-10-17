@@ -14,29 +14,13 @@ variable "private_subnet_cidrs" {
   type        = list(string)
 }
 
-variable "db_subnet_cidrs" {
-  description = "CIDR blocks for the database subnets"
-  type        = list(string)
-}
-
-variable "elastic_ips" {
+variable "elastic_ip_names" {
   description = "Elastic IPs for public subnets"
   type        = map(string)
 }
 
-variable "private_ips" {
-  description = "Private IPs for subnets"
-  type        = map(string)
-}
-
-variable "anywhere_ip" {
+variable "any_ip" {
   description = "IP address for anywhere"
-  type        = string
-}
-
-// 인스턴스 변수
-variable "instance_type" {
-  description = "EC2 instance type"
   type        = string
 }
 
@@ -45,24 +29,25 @@ variable "instance_names" {
   type        = list(string)
 }
 
+// 인스턴스 변수
+variable "instance_types" {
+  description = "EC2 instance types"
+  type        = map(string)
+}
+
 variable "instance_indexes" {
-  description = "EC2 instance index"
+  description = "EC2 instance indexs"
   type        = map(number)
 }
 
 variable "ssh_keys" {
-  description = "EC2 SSH access key name"
+  description = "EC2 SSH access key names"
   type        = map(string)
 }
 
-variable "ec2-s3_role_name" {
-  description = "The name of the role to associate with the EC2 instance"
-  type        = string
-}
-
-variable "ec2-s3_iam_instance_profile_name" {
-  description = "The name of the IAM instance profile to associate with the EC2 instance"
-  type        = string
+variable "private_ips" {
+  description = "Private IPs for subnets"
+  type        = map(string)
 }
 
 // 데이터베이스 변수
@@ -109,26 +94,4 @@ variable "db_username" {
 variable "db_password" {
   description = "Database password"
   type        = string
-}
-
-// 로드 밸런서 변수
-variable "domain_name" {
-  description = "The domain name for the ACM certificate"
-  type        = string
-}
-
-// API Gateway 변수
-variable "api_name" {
-  description = "Name of the HTTP API"
-  type        = string
-}
-
-variable "api_routes" {
-    description = "List of API routes and their configurations"
-    type = map(object({
-        route_key     = string
-        method        = string
-        uri           = string
-        description   = string
-    }))
 }
