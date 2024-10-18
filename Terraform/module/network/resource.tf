@@ -11,7 +11,7 @@ resource "aws_subnet" "public" {
   count             = length(var.public_subnet_cidrs)
   vpc_id            = aws_vpc.gitfolio.id
   cidr_block        = var.public_subnet_cidrs[count.index]
-  availability_zone = data.aws_availability_zones.selected.names[0]
+  availability_zone = var.availability_zones[0]
   map_public_ip_on_launch = true
   
   tags = {
@@ -23,7 +23,7 @@ resource "aws_subnet" "private" {
   count             = length(var.private_subnet_cidrs)
   vpc_id            = aws_vpc.gitfolio.id
   cidr_block        = var.private_subnet_cidrs[count.index]
-  availability_zone = data.aws_availability_zones.selected.names[count.index % 2]
+  availability_zone = var.availability_zones[count.index % 2]
   
   tags = {
     Name = "Gitfolio ${var.instance_names[count.index]} subnet"
@@ -32,6 +32,10 @@ resource "aws_subnet" "private" {
 
 resource "aws_eip" "nat_eip" {
   domain = "vpc"
+  
+  tags = {
+    Name = "Gitfolio NAT EIP"
+  }
 }
 
 resource "aws_internet_gateway" "igw" {

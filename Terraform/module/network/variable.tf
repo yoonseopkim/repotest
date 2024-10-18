@@ -13,6 +13,11 @@ variable "private_subnet_cidrs" {
   type        = list(string)
 }
 
+variable "availability_zones" {
+  description = "Available zones for subnet"
+  type        = list(string)
+}
+
 variable "any_ip" {
   description = "IP address for anywhere"
   type        = string

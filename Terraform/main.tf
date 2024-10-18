@@ -4,7 +4,12 @@ locals {
 
 module "ami" {
   source = "./module/ami"
-  count = local.shared ? 0 : 1
+  count  = local.shared ? 0 : 1
+}
+
+module "availability_zones" {
+  source = "./module/az"
+  count  = local.shared ? 1 : 0
 }
 
 module "gitfolio_network" {
@@ -14,6 +19,7 @@ module "gitfolio_network" {
   vpc_cidr             = var.vpc_cidr
   public_subnet_cidrs  = var.public_subnet_cidrs
   private_subnet_cidrs = var.private_subnet_cidrs
+  availability_zones   = module.availability_zones[0].az
   any_ip               = var.any_ip
   
   instance_names       = var.instance_names
