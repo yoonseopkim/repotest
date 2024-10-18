@@ -25,52 +25,7 @@ module "gitfolio_network" {
   instance_names       = var.instance_names
 }
 
-module "gitfolio_master" {
-  source             = "./module/node"
-  count              = local.shared ? 0 : 1
-
-  vpc_id             = local.shared ? null : data.terraform_remote_state.shared.outputs.vpc_id
-  private_subnet_ids = local.shared ? null : data.terraform_remote_state.shared.outputs.private_subnet_ids
-  private_ips        = local.shared ? null : var.private_ips
-  any_ip             = local.shared ? null : var.any_ip
-
-  ami_id             = local.shared ? null : module.ami[0].amazon_linux_id
-  instance_types     = local.shared ? null : var.instance_types
-  instance_indexes   = local.shared ? null : var.instance_indexes
-  ssh_keys           = local.shared ? null : var.ssh_keys
-}
-
-module "gitfolio_front" {
-  source = "./module/node"
-  count              = local.shared ? 0 : 1
-
-  vpc_id             = local.shared ? null : data.terraform_remote_state.shared.outputs.vpc_id
-  private_subnet_ids = local.shared ? null : data.terraform_remote_state.shared.outputs.private_subnet_ids
-  private_ips        = local.shared ? null : var.private_ips
-  any_ip             = local.shared ? null : var.any_ip
-
-  ami_id             = local.shared ? null : module.ami[0].amazon_linux_id
-  instance_types     = local.shared ? null : var.instance_types
-  instance_indexes   = local.shared ? null : var.instance_indexes
-  ssh_keys           = local.shared ? null : var.ssh_keys
-}
-
-module "gitfolio_back" {
-  source = "./module/node"
-  count              = local.shared ? 0 : 1
-
-  vpc_id             = local.shared ? null : data.terraform_remote_state.shared.outputs.vpc_id
-  private_subnet_ids = local.shared ? null : data.terraform_remote_state.shared.outputs.private_subnet_ids
-  private_ips        = local.shared ? null : var.private_ips
-  any_ip             = local.shared ? null : var.any_ip
-
-  ami_id             = local.shared ? null : module.ami[0].amazon_linux_id
-  instance_types     = local.shared ? null : var.instance_types
-  instance_indexes   = local.shared ? null : var.instance_indexes
-  ssh_keys           = local.shared ? null : var.ssh_keys
-}
-
-module "gitfolio_cicd" {
+module "gitfolio_node" {
   source             = "./module/node"
   count              = local.shared ? 0 : 1
 
