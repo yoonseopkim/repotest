@@ -104,3 +104,18 @@ module "gitfolio_cicd" {
 #   db_username         = var.db_username
 #   db_password         = var.db_password
 # }
+
+module "gitfolio_nosql" {
+  source             = "./module/db/nosql"
+  count              = local.shared ? 0 : 1
+
+  vpc_id             = local.shared ? null : data.terraform_remote_state.shared.outputs.vpc_id
+  private_subnet_ids = local.shared ? null : data.terraform_remote_state.shared.outputs.private_subnet_ids
+  private_ips        = local.shared ? null : var.private_ips
+  any_ip             = local.shared ? null : var.any_ip
+
+  ami_id             = local.shared ? null : module.ami[0].amazon_linux_id
+  instance_types     = local.shared ? null : var.instance_types
+  instance_indexes   = local.shared ? null : var.instance_indexes
+  ssh_keys           = local.shared ? null : var.ssh_keys
+}
