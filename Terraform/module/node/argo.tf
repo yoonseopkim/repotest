@@ -1,4 +1,4 @@
-resource "aws_security_group" "cicd" {
+resource "aws_security_group" "argo" {
   vpc_id = var.vpc_id
 
   ingress {
@@ -33,20 +33,7 @@ resource "aws_security_group" "cicd" {
   }
 
   tags = {
-    Name = "Gitfolio Kubernetes worker node security group"
-  }
-}
-
-resource "aws_instance" "jenkins" {
-  ami           = var.ami_id
-  instance_type = var.instance_types["high"]
-  key_name      = var.ssh_keys["jenkins"]
-  subnet_id     = var.private_subnet_ids[var.instance_indexes["jenkins"]]
-  vpc_security_group_ids = [aws_security_group.cicd.id]
-  private_ip = var.private_ips["jenkins"]
-  
-  tags = {
-    Name = "Gitfolio Jenkins"
+    Name = "Gitfolio ArgoCD security group"
   }
 }
 
@@ -55,7 +42,7 @@ resource "aws_instance" "argo" {
   instance_type = var.instance_types["high"]
   key_name      = var.ssh_keys["argo"]
   subnet_id     = var.private_subnet_ids[var.instance_indexes["argo"]]
-  vpc_security_group_ids = [aws_security_group.cicd.id]
+  vpc_security_group_ids = [aws_security_group.argo.id]
   private_ip = var.private_ips["argo"]
   
   tags = {
