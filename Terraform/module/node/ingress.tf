@@ -1,4 +1,4 @@
-resource "aws_security_group" "master" {
+resource "aws_security_group" "ingress" {
   vpc_id = var.vpc_id
 
   ingress {
@@ -33,19 +33,19 @@ resource "aws_security_group" "master" {
   }
 
   tags = {
-    Name = "Gitfolio Kubernetes master node security group"
+    Name = "Gitfolio Kubernetes ingress node security group"
   }
 }
 
-resource "aws_instance" "master" {
+resource "aws_instance" "ingress" {
   ami           = var.ami_id
   instance_type = var.instance_types["low"]
   key_name      = var.ssh_keys["kubernetes"]
   subnet_id     = var.private_subnet_ids[var.instance_indexes["kubernetes"]]
-  vpc_security_group_ids = [aws_security_group.master.id]
-  private_ip = var.private_ips["master"]
+  vpc_security_group_ids = [aws_security_group.ingress.id]
+  private_ip = var.private_ips["ingress"]
   
   tags = {
-    Name = "Gitfolio Kubernetes master node"
+    Name = "Gitfolio Kubernetes ingress node"
   }
 }
