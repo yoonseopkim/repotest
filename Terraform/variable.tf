@@ -51,6 +51,11 @@ variable "private_ips" {
 }
 
 // 데이터베이스 변수
+variable "db_subnet_cidrs" {
+  description = "CIDR block for RDS subnet"
+  type        = list(string)
+}
+
 variable identifier {
   description = "RDS instance name"
   type        = string

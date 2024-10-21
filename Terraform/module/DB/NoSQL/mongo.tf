@@ -30,12 +30,12 @@ resource "aws_security_group" "mongo" {
 }
 
 resource "aws_instance" "mongo" {
-  ami           = var.ami_id
-  instance_type = var.instance_types["low"]
-  key_name      = var.ssh_keys["mongo"]
-  subnet_id     = var.private_subnet_ids[var.instance_indexes["mongo"]]
+  ami                    = var.ami_id
+  instance_type          = var.instance_types["low"]
+  key_name               = var.ssh_keys["mongo"]
+  subnet_id              = var.private_subnet_ids[var.instance_indexes["mongo"]]
   vpc_security_group_ids = [aws_security_group.mongo.id]
-  private_ip = var.private_ips["mongo"]
+  private_ip             = var.private_ips["mongo"]
 
   root_block_device {
     volume_size = 20

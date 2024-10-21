@@ -2,10 +2,10 @@ resource "aws_subnet" "db" {
   count             = length(var.db_subnet_cidrs)
   vpc_id            = var.vpc_id
   cidr_block        = var.db_subnet_cidrs[count.index]
-  availability_zone = data.aws_availability_zones.selected.names[count.index]
+  availability_zone = var.availability_zones[count.index]
   
   tags = {
-    Name = "Gitfolio RDS subnet ${data.aws_availability_zones.selected.names[count.index]}"
+    Name = "Gitfolio RDS subnet ${var.availability_zones[count.index]}"
   }
 }
 

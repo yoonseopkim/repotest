@@ -8,6 +8,11 @@ variable "db_subnet_cidrs" {
   type        = list(string)
 }
 
+variable "availability_zones" {
+  description = "Available zones for subnet"
+  type        = list(string)
+}
+
 variable identifier {
   description = "RDS instance name"
   type        = string
