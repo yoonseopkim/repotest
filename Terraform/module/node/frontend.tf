@@ -11,19 +11,11 @@ resource "aws_security_group" "front" {
   }
 
   ingress {
-    description = "HTTP"
-    from_port = 80
-    to_port = 80
+    description = "NextJS"
+    from_port = 3000
+    to_port = 3000
     protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
-
-  ingress {
-    description = "HTTPS"
-    from_port = 443
-    to_port = 443
-    protocol = "tcp"
-    cidr_blocks = [var.any_ip]
+    cidr_blocks = [var.public_subnet_cidrs[0], var.public_subnet_cidrs[1]]
   }
 
   egress {

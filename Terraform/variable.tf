@@ -101,6 +101,67 @@ variable "db_password" {
   type        = string
 }
 
+// 로드 밸런서 변수
+variable "lb_type" {
+  description = "Type of load balancer"
+  type        = string
+}
+
+variable "delete_protection" {
+  description = "Delete protection of load balancer"
+  type        = bool
+}
+
+variable "target_port" {
+  description = "Port for target group to map"
+  type        = number
+}
+
+variable "target_protocol" {
+  description = "Protocol for target group to map"
+  type        = string
+}
+
+variable "health_threshold" {
+  description = "Number of times to check healthiness for load balancer health check"
+  type        = number
+}
+
+variable "health_interval" {
+  description = "Health check interval time(second) for load balancer"
+  type        = number
+}
+
+variable "health_matcher" {
+  description = "Code of correct connection for load balancer"
+  type        = string
+}
+
+variable "health_path" {
+  description = "Path for load balancer health check"
+  type        = string
+}
+
+variable "health_port" {
+  description = "Port for load balancer health check"
+  type        = string
+}
+
+variable "health_protocol" {
+  description = "Protocol for load balancer health check"
+  type        = string
+}
+
+variable "health_timeout" {
+  description = "Time duration for health check failure"
+  type        = number
+}
+
+variable "health_unthreshold" {
+  description = "Number of times to determine unhealthiness"
+  type        = number
+}
+
 // ECR 변수
 variable "ecr_repo_name" {
   description  = "Name of the ECR repository"
