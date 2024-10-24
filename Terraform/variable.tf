@@ -9,6 +9,11 @@ variable "public_subnet_cidrs" {
   type        = list(string)
 }
 
+variable "nat_cidr" {
+  description = "CIDR block for the nat subnet"
+  type        = string
+}
+
 variable "private_subnet_cidrs" {
   description = "CIDR blocks for the private subnets"
   type        = list(string)
