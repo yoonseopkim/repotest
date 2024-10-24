@@ -1,4 +1,5 @@
 resource "aws_security_group" "jenkins" {
+  name = "jenkins_sg"
   vpc_id = var.vpc_id
 
   ingress {
