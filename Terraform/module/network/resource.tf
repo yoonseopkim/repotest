@@ -1,5 +1,10 @@
+locals {
+  shared = terraform.workspace == "shared"
+}
+
 resource "aws_vpc" "gitfolio" {
-  cidr_block = var.vpc_cidr
+  count                = local.shared ? 1 : 0
+  cidr_block           = var.vpc_cidr
   enable_dns_hostnames = true
   
   tags = {
@@ -8,20 +13,31 @@ resource "aws_vpc" "gitfolio" {
 }
 
 resource "aws_subnet" "public" {
-  count             = length(var.public_subnet_cidrs)
-  vpc_id            = aws_vpc.gitfolio.id
+  count             = local.shared ? 0 : length(var.public_subnet_cidrs)
+  vpc_id            = var.vpc_id
   cidr_block        = var.public_subnet_cidrs[count.index]
   availability_zone = var.availability_zones[count.index % 2]
   map_public_ip_on_launch = true
   
   tags = {
-    Name = floor(count.index / 2) == 0 ? "Gitfolio Load Balancer subnet ${count.index + 1}" : "Gitfolio NAT subnet"
+    Name = "Gitfolio ${terraform.workspace} lb subnet${count.index + 1}"
+  }
+}
+
+resource "aws_subnet" "nat" {
+  count             = local.shared ? 1 : 0
+  vpc_id            = aws_vpc.gitfolio[0].id
+  cidr_block        = var.nat_subnet_cidr
+  availability_zone = var.availability_zones[1]
+  
+  tags = {
+    Name = "Gitfolio NAT subnet"
   }
 }
 
 resource "aws_subnet" "private" {
-  count             = length(var.private_subnet_cidrs)
-  vpc_id            = aws_vpc.gitfolio.id
+  count             = local.shared ? 0 : length(var.private_subnet_cidrs)
+  vpc_id            = var.vpc_id
   cidr_block        = var.private_subnet_cidrs[count.index]
   availability_zone = var.availability_zones[count.index % 2]
   
@@ -31,6 +47,7 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_eip" "nat_eip" {
+  count  = local.shared ? 1 : 0
   domain = "vpc"
   
   tags = {
@@ -39,7 +56,8 @@ resource "aws_eip" "nat_eip" {
 }
 
 resource "aws_internet_gateway" "igw" {
-  vpc_id = aws_vpc.gitfolio.id
+  count  = local.shared ? 1 : 0
+  vpc_id = aws_vpc.gitfolio[0].id
 
   tags = {
     Name = "Gitfolio Internet Gateway"
@@ -47,8 +65,9 @@ resource "aws_internet_gateway" "igw" {
 }
 
 resource "aws_nat_gateway" "nat" {
-  allocation_id = aws_eip.nat_eip.id
-  subnet_id = aws_subnet.public[1].id
+  count         = local.shared ? 1 : 0
+  allocation_id = aws_eip.nat_eip[0].id
+  subnet_id     = aws_subnet.nat[0].id
 
   tags = {
     Name = "Gitfolio NAT Gateway"
@@ -58,11 +77,12 @@ resource "aws_nat_gateway" "nat" {
 }
 
 resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.gitfolio.id
+  count  = local.shared ? 0 : 1
+  vpc_id = var.vpc_id
 
   route {
     cidr_block = var.any_ip
-    gateway_id = aws_internet_gateway.igw.id
+    gateway_id = var.igw_id
   }
 
   tags = {
@@ -71,28 +91,27 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table" "private" {
-  vpc_id = aws_vpc.gitfolio.id
+  count  = local.shared ? 0 : 1
+  vpc_id = var.vpc_id
 
   route {
-    cidr_block = var.any_ip
-    nat_gateway_id = aws_nat_gateway.nat.id
+    cidr_block     = var.any_ip
+    nat_gateway_id = var.nat_id
   }
 
   tags = {
     Name = "Gitfolio private route table"
   }
-
-  depends_on = [ aws_nat_gateway.nat ]
 }
 
 resource "aws_route_table_association" "public" {
-  count = length(aws_subnet.public)
-  subnet_id = aws_subnet.public[count.index].id
-  route_table_id = aws_route_table.public.id
+  count          = local.shared ? 0 : length(aws_subnet.public)
+  subnet_id      = aws_subnet.public[count.index].id
+  route_table_id = aws_route_table.public[0].id
 }
 
 resource "aws_route_table_association" "private" {
-  count = length(aws_subnet.private)
-  subnet_id = aws_subnet.private[count.index].id
-  route_table_id = aws_route_table.private.id
+  count          = local.shared ? 0 : length(aws_subnet.private)
+  subnet_id      = aws_subnet.private[count.index].id
+  route_table_id = aws_route_table.private[0].id
 }

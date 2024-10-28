@@ -9,7 +9,7 @@ resource "aws_subnet" "db" {
   }
 }
 
-resource "aws_db_subnet_group" "db" {
+resource "aws_db_subnet_group" "mysql" {
     subnet_ids = aws_subnet.db[*].id
 
     tags = {
@@ -17,7 +17,8 @@ resource "aws_db_subnet_group" "db" {
     }
 }
 
-resource "aws_security_group" "db" {
+resource "aws_security_group" "mysql" {
+  name = "mysql_sg"
   vpc_id = var.vpc_id
 
   ingress {
@@ -40,7 +41,7 @@ resource "aws_security_group" "db" {
   }
 }
 
-resource "aws_db_instance" "database" {
+resource "aws_db_instance" "mysql" {
     identifier             = var.identifier
     engine                 = var.engine
     engine_version         = var.engine_version
@@ -54,8 +55,8 @@ resource "aws_db_instance" "database" {
     
     publicly_accessible    = false
     skip_final_snapshot    = true
-    vpc_security_group_ids = [aws_security_group.db.id]
-    db_subnet_group_name   = aws_db_subnet_group.db.name
+    vpc_security_group_ids = [aws_security_group.mysql.id]
+    db_subnet_group_name   = aws_db_subnet_group.mysql.name
 
     tags = {
         Name = "${var.identifier}"

@@ -3,14 +3,6 @@ resource "aws_security_group" "alb" {
   vpc_id = var.vpc_id
 
   ingress {
-    description = "ssh"
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
-
-  ingress {
     description = "HTTP"
     from_port = 80
     to_port = 80
@@ -34,7 +26,7 @@ resource "aws_security_group" "alb" {
   }
 
   tags = {
-    Name = "Gitfolio ArgoCD security group"
+    Name = "Gitfolio load balancer security group"
   }
 }
 
@@ -43,12 +35,12 @@ resource "aws_lb" "alb" {
   internal                   = false
   load_balancer_type         = var.lb_type
   security_groups            = [aws_security_group.alb.id]
-  subnets                    = [var.public_subnet_ids[0], var.public_subnet_ids[1]]
+  subnets                    = var.public_subnet_ids
 
   enable_deletion_protection = var.delete_protection
 
   tags = {
-    Name = "Gitfolio load balancer"
+    Name = "Gitfolio ${terraform.workspace} load balancer"
   }
 }
 
@@ -68,7 +60,7 @@ resource "aws_lb_listener" "http" {
   }
 
   tags = {
-    Name = "Gitfolio HTTP listner"
+    Name = "Gitfolio ${terraform.workspace} HTTP listner"
   }
 }
 
@@ -86,7 +78,7 @@ resource "aws_lb_listener" "https" {
   }
 
   tags = {
-    Name = "Gitfolio HTTPS listner"
+    Name = "Gitfolio ${terraform.workspace} HTTPS listner"
   }
 }
 
