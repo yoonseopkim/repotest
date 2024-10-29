@@ -70,6 +70,9 @@ override.tf.json
 .terraformrc
 terraform.rc
 
+# Ignore workspace dev directory
+**/environment/dev/*
+
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db
