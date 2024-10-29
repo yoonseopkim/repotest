@@ -27,3 +27,8 @@ output "nat_id" {
   description = "ID of the nat gateway"
   value       = local.shared ? aws_nat_gateway.nat[0].id : null
 }
+
+output "public_route_table_id" {
+  description = "ID of the public route table"
+  value       = local.shared ? aws_route_table.public[0].id : null
+}

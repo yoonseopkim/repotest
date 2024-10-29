@@ -23,6 +23,7 @@ module "gitfolio_network" {
   
   instance_names       = var.instance_names
 
+  public_route_table_id = local.shared ? null : data.terraform_remote_state.shared.outputs.public_route_table_id
   vpc_id               = local.shared ? null : data.terraform_remote_state.shared.outputs.vpc_id
   igw_id               = local.shared ? null : data.terraform_remote_state.shared.outputs.igw_id
   nat_id               = local.shared ? null : data.terraform_remote_state.shared.outputs.nat_id

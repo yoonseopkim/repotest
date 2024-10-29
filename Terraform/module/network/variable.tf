@@ -48,3 +48,8 @@ variable "nat_id" {
   description = "ID of the nat gateway"
   type        = string
 }
+
+variable "public_route_table_id" {
+  description = "ID of public route table id"
+  type        = string
+}

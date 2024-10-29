@@ -77,12 +77,12 @@ resource "aws_nat_gateway" "nat" {
 }
 
 resource "aws_route_table" "public" {
-  count  = local.shared ? 0 : 1
-  vpc_id = var.vpc_id
+  count  = local.shared ? 1 : 0
+  vpc_id = aws_vpc.gitfolio[0].id
 
   route {
     cidr_block = var.any_ip
-    gateway_id = var.igw_id
+    gateway_id = aws_internet_gateway.igw[0].id
   }
 
   tags = {
@@ -107,7 +107,13 @@ resource "aws_route_table" "private" {
 resource "aws_route_table_association" "public" {
   count          = local.shared ? 0 : length(aws_subnet.public)
   subnet_id      = aws_subnet.public[count.index].id
-  route_table_id = aws_route_table.public[0].id
+  route_table_id = var.public_route_table_id
+}
+
+resource "aws_route_table_association" "nat" {
+ count          = local.shared ? 1 : 0
+ subnet_id      = aws_subnet.nat[0].id
+ route_table_id = aws_route_table.public[0].id
 }
 
 resource "aws_route_table_association" "private" {
