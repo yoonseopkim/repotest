@@ -43,44 +43,52 @@ module "gitfolio_node" {
   instance_types       = var.instance_types
   instance_indexes     = var.instance_indexes
   ssh_keys             = var.ssh_keys
+
+  on_front             = 1
+  on_back              = 1
+  on_ai                = 1
+  on_master            = 0
+  on_jenkins           = 0
+  on_argo              = 0
+  on_ingress           = 0
 }
 
-# module "gitfolio_db" {
-#   source              = "./module/db/rds"
-#   count               = local.shared ? 1 : 0
+module "gitfolio_rds" {
+  source              = "./module/db/rds"
+  count               = local.shared ? 0 : 1
 
-#   vpc_id              = module.gitfolio_network[0].vpc_id
-#   db_subnet_cidrs     = var.db_subnet_cidrs
-#   private_ips         = var.private_ips
-#   any_ip              = var.any_ip
-#   availability_zones  = module.availability_zones[0].az
+  vpc_id              = data.terraform_remote_state.shared.outputs.vpc_id
+  db_subnet_cidrs     = var.db_subnet_cidrs
+  private_ips         = var.private_ips
+  any_ip              = var.any_ip
+  availability_zones  = module.availability_zones.az
 
 
-#   identifier          = var.identifier
-#   engine              = var.engine
-#   engine_version      = var.engine_version
-#   instance_class      = var.instance_class
-#   allocated_storage   = var.allocated_storage
-#   storage_type        = var.storage_type
-#   db_name             = var.db_name
-#   db_username         = var.db_username
-#   db_password         = var.db_password
-# }
+  identifier          = var.identifier
+  engine              = var.engine
+  engine_version      = var.engine_version
+  instance_class      = var.instance_class
+  allocated_storage   = var.allocated_storage
+  storage_type        = var.storage_type
+  db_name             = var.db_name
+  db_username         = var.db_username
+  db_password         = var.db_password
+}
 
-# module "gitfolio_nosql" {
-#   source             = "./module/db/nosql"
-#   count              = local.shared ? 0 : 1
+module "gitfolio_nosql" {
+  source             = "./module/db/nosql"
+  count              = local.shared ? 0 : 1
 
-#   vpc_id             = data.terraform_remote_state.shared.outputs.vpc_id
-#   private_subnet_ids = data.terraform_remote_state.shared.outputs.private_subnet_ids
-#   private_ips        = var.private_ips
-#   any_ip             = var.any_ip
+  vpc_id             = data.terraform_remote_state.shared.outputs.vpc_id
+  private_subnet_ids = module.gitfolio_network.private_subnet_ids
+  private_ips        = var.private_ips
+  any_ip             = var.any_ip
 
-#   ami_id             = module.ami[0].amazon_linux_id
-#   instance_types     = var.instance_types
-#   instance_indexes   = var.instance_indexes
-#   ssh_keys           = var.ssh_keys
-# }
+  ami_id             = module.ami[0].amazon_linux_id
+  instance_types     = var.instance_types
+  instance_indexes   = var.instance_indexes
+  ssh_keys           = var.ssh_keys
+}
 
 module "gitfolio_alb" {
   source = "./module/LB"
