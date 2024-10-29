@@ -1,4 +1,20 @@
+resource "aws_instance" "frontend" {
+  count                  = var.on_front
+  ami                    = var.ami_id
+  instance_type          = var.instance_types["low"]
+  key_name               = var.ssh_keys["front"]
+  subnet_id              = var.private_subnet_ids[var.instance_indexes["front"]]
+  vpc_security_group_ids = [aws_security_group.front[0].id]
+  private_ip             = var.private_ips["front"]
+  iam_instance_profile   = "gitfolio_ec2_iam_profile"
+  
+  tags = {
+    Name = "Gitfolio Frontend"
+  }
+}
+
 resource "aws_security_group" "front" {
+  count = var.on_front
   name = "front_sg"
   vpc_id = var.vpc_id
 
@@ -9,6 +25,7 @@ resource "aws_security_group" "front" {
     protocol = "tcp"
     cidr_blocks = [var.any_ip]
   }
+
   ingress {
     description = "HTTP"
     from_port = 80
@@ -42,19 +59,5 @@ resource "aws_security_group" "front" {
 
   tags = {
     Name = "Gitfolio frontend security group"
-  }
-}
-
-resource "aws_instance" "frontend" {
-  ami                    = var.ami_id
-  instance_type          = var.instance_types["low"]
-  key_name               = var.ssh_keys["front"]
-  subnet_id              = var.private_subnet_ids[var.instance_indexes["front"]]
-  vpc_security_group_ids = [aws_security_group.front.id]
-  private_ip             = var.private_ips["front"]
-  //iam_instance_profile = "sysmte_manager"
-  
-  tags = {
-    Name = "Gitfolio Frontend"
   }
 }
