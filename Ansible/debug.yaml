@@ -1,4 +1,4 @@
-- hosts: debug
+- hosts: all
   tasks:
   - name: Install environment
     dnf:

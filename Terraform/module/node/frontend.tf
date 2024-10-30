@@ -1,7 +1,7 @@
 resource "aws_instance" "frontend" {
   count                  = var.on_front
   ami                    = var.ami_id
-  instance_type          = var.instance_types["low"]
+  instance_type          = var.instance_types["micro"]
   key_name               = var.ssh_keys["front"]
   subnet_id              = var.private_subnet_ids[var.instance_indexes["front"]]
   vpc_security_group_ids = [aws_security_group.front[0].id]
@@ -9,7 +9,9 @@ resource "aws_instance" "frontend" {
   iam_instance_profile   = "gitfolio_ec2_iam_profile"
   
   tags = {
-    Name = "Gitfolio Frontend"
+    Name = "Gitfolio Frontend",
+    Environment = terraform.workspace,
+    Type = "front"
   }
 }
 
