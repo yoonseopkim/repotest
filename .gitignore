@@ -100,4 +100,5 @@ $RECYCLE.BIN/
 *.lnk
 
 # Ansible inventory file
-*vault.yaml
+**/group_vars/**
+**/inventory/**

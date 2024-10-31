@@ -45,7 +45,7 @@ module "gitfolio_node" {
   ssh_keys             = var.ssh_keys
 
   on_front             = 1
-  on_back              = 0
+  on_back              = 1
   on_ai                = 0
   on_master            = 0
   on_jenkins           = 0
