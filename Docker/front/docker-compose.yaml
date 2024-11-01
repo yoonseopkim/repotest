@@ -1,0 +1,13 @@
+services:
+  frontend:
+    build:
+      context: ./
+      dockerfile: dockerfile
+    image: aida0/gitfolio:front_test
+    ports:
+      - target: 3000
+        published: 80
+        protocol: tcp
+      - target: 3000
+        published: 443
+        protocol: tcp
