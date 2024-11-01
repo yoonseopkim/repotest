@@ -1,0 +1,9 @@
+FROM amazoncorretto:17 AS runner
+
+WORKDIR /payment
+
+EXPOSE 8083
+
+COPY --from=aida0/gitfolio:builder /gitfolio_back/build/*-payment-*-SNAPSHOT.jar payment.jar
+
+CMD [ "java", "-jar", "payment.jar" ]
