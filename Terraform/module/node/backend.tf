@@ -1,7 +1,7 @@
 resource "aws_instance" "backend" {
   count         = var.on_back
   ami           = var.ami_id
-  instance_type = var.instance_types["low"]
+  instance_type = var.instance_types["micro"]
   key_name      = var.ssh_keys["back"]
   subnet_id     = var.private_subnet_ids[var.instance_indexes["back"]]
   vpc_security_group_ids = [aws_security_group.back[0].id]
@@ -9,7 +9,9 @@ resource "aws_instance" "backend" {
   iam_instance_profile   = "gitfolio_ec2_iam_profile"
   
   tags = {
-    Name = "Gitfolio Backend"
+    Name = "Gitfolio Backend",
+    Environment = terraform.workspace
+    Type = "back"
   }
 }
 

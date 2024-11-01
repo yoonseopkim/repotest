@@ -12,7 +12,9 @@ resource "aws_instance" "redis" {
   }
   
   tags = {
-    Name = "Gitfolio Redis"
+    Name = "Gitfolio Redis",
+    Environment = terraform.workspace,
+    Tyep = "redis"
   }
 }
 

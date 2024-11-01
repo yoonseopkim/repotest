@@ -46,7 +46,7 @@ module "gitfolio_node" {
 
   on_front             = 1
   on_back              = 1
-  on_ai                = 1
+  on_ai                = 0
   on_master            = 0
   on_jenkins           = 0
   on_argo              = 0
@@ -55,7 +55,7 @@ module "gitfolio_node" {
 
 module "gitfolio_rds" {
   source              = "./module/db/rds"
-  count               = local.shared ? 0 : 1
+  count               = local.shared ? 0 : 0
 
   vpc_id              = data.terraform_remote_state.shared.outputs.vpc_id
   db_subnet_cidrs     = var.db_subnet_cidrs
@@ -77,7 +77,7 @@ module "gitfolio_rds" {
 
 module "gitfolio_nosql" {
   source             = "./module/db/nosql"
-  count              = local.shared ? 0 : 1
+  count              = local.shared ? 0 : 0
 
   vpc_id             = data.terraform_remote_state.shared.outputs.vpc_id
   private_subnet_ids = module.gitfolio_network.private_subnet_ids

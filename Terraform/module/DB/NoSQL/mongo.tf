@@ -12,7 +12,9 @@ resource "aws_instance" "mongo" {
   }
   
   tags = {
-    Name = "Gitfolio MongoDB"
+    Name = "Gitfolio MongoDB",
+    Environment = terraform.workspace,
+    Type = "mongo"
   }
 }
 
