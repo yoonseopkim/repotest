@@ -45,7 +45,7 @@ module "gitfolio_node" {
   ssh_keys             = var.ssh_keys
 
   on_front             = 1
-  on_back              = 1
+  on_back              = 4
   on_ai                = 0
   on_master            = 0
   on_jenkins           = 0
@@ -53,31 +53,9 @@ module "gitfolio_node" {
   on_ingress           = 0
 }
 
-module "gitfolio_rds" {
-  source              = "./module/db/rds"
-  count               = local.shared ? 0 : 0
-
-  vpc_id              = data.terraform_remote_state.shared.outputs.vpc_id
-  db_subnet_cidrs     = var.db_subnet_cidrs
-  private_ips         = var.private_ips
-  any_ip              = var.any_ip
-  availability_zones  = module.availability_zones.az
-
-
-  identifier          = var.identifier
-  engine              = var.engine
-  engine_version      = var.engine_version
-  instance_class      = var.instance_class
-  allocated_storage   = var.allocated_storage
-  storage_type        = var.storage_type
-  db_name             = var.db_name
-  db_username         = var.db_username
-  db_password         = var.db_password
-}
-
-module "gitfolio_nosql" {
-  source             = "./module/db/nosql"
-  count              = local.shared ? 0 : 0
+module "gitfolio_db" {
+  source             = "./module/db"
+  count              = local.shared ? 0 : 1
 
   vpc_id             = data.terraform_remote_state.shared.outputs.vpc_id
   private_subnet_ids = module.gitfolio_network.private_subnet_ids
@@ -91,8 +69,8 @@ module "gitfolio_nosql" {
 }
 
 module "gitfolio_alb" {
-  source = "./module/LB"
-  count = local.shared ? 0 : 1
+  source               = "./module/LB"
+  count                = local.shared ? 0 : 1
 
   vpc_id               = data.terraform_remote_state.shared.outputs.vpc_id
   public_subnet_ids    = module.gitfolio_network.public_subnet_ids

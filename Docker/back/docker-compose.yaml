@@ -4,7 +4,7 @@ volumes:
 
 services:
   builder:
-    platform: linux/arm64
+    platform: linux/amd64
     build:
       context: ./
       dockerfile: dockerfile
@@ -15,12 +15,10 @@ services:
     image: aida0/gitfolio_builder:test
 
   auth:
-    platform: linux/arm64
+    platform: linux/amd64
     build:
       context: ./gitfolio-auth
       dockerfile: dockerfile
-    depends_on:
-      - builder
     image: aida0/gitfolio_auth:test
     ports:
       - target: 8080
@@ -28,12 +26,10 @@ services:
         protocol: tcp
 
   member:
-    platform: linux/arm64
+    platform: linux/amd64
     build:
       context: ./gitfolio-member
       dockerfile: dockerfile
-    depends_on:
-      - builder
     image: aida0/gitfolio_member:test
     ports:
       - target: 8081
@@ -41,12 +37,10 @@ services:
         protocol: tcp
 
   payment:
-    platform: linux/arm64
+    platform: linux/amd64
     build:
       context: ./gitfolio-payment
       dockerfile: dockerfile
-    depends_on:
-      - builder
     image: aida0/gitfolio_payment:test
     ports:
       - target: 8082
@@ -54,12 +48,10 @@ services:
         protocol: tcp
 
   resume:
-    platform: linux/arm64
+    platform: linux/amd64
     build:
       context: ./gitfolio-resume
       dockerfile: dockerfile
-    depends_on:
-      - builder
     image: aida0/gitfolio_resume:test
     ports:
       - target: 8083
