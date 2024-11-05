@@ -7,7 +7,10 @@ xargs -I {} aws ec2 describe-instances \
     --query "Reservations[*].Instances[*].{
         InstanceId:InstanceId,
         Name:Tags[?Key=='Name'].Value|[0],
+        Service:Tags[?Key=='Service'].Value|[0],
+        Type:Tags[?Key=='Type'].Value|[0],
         Environment:Tags[?Key=='Environment'].Value|[0],
-        Service:Tags[?Key=='Service'].Value|[0]
+        IP:PrivateIpAddress
     }" \
-    --output json > instances.json
+    --output json 2>/dev/null | \
+jq -s 'flatten | sort_by(.IP) | [.[] | { Name, InstanceId, Service, Type, Environment }]' > instances.json
