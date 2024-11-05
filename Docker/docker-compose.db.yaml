@@ -1,0 +1,29 @@
+services:
+  mysql-notification:
+    image: mysql:8.0
+    container_name: mysql-notification
+    environment:
+      MYSQL_ROOT_PASSWORD: dydrkfl11!
+      MYSQL_DATABASE: gitfolio_notification
+    ports:
+      - target: 3306
+        published: 3309
+        protocol: tcp
+
+  mongo-member:
+    image: mongo:5.0
+    container_name: mongo-member
+    ports:
+      - target: 27017
+        published: 27017
+        protocol: tcp
+    environment:
+      MONGO_INITDB_DATABASE: gitfolio_member
+
+  redis-resume:
+    image: redis:alpine
+    container_name: redis-resume
+    ports:
+      - target: 6379
+        published: 6378
+        protocol: tcp
