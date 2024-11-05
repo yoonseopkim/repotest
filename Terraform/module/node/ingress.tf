@@ -13,7 +13,7 @@ resource "aws_instance" "ingress" {
 }
 
 resource "aws_security_group" "ingress" {
-  count = var.on_ingress
+  count = var.on_ingress == 0 ? 0 : 1
   name = "ingress_sg"
   vpc_id = var.vpc_id
 

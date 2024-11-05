@@ -11,12 +11,12 @@ resource "aws_instance" "frontend" {
   tags = {
     Name = "Gitfolio Frontend",
     Environment = terraform.workspace,
-    Type = "front"
+    Service = "front"
   }
 }
 
 resource "aws_security_group" "front" {
-  count = var.on_front
+  count = var.on_front == 0 ? 0 : 1
   name = "front_sg"
   vpc_id = var.vpc_id
 

@@ -3,12 +3,12 @@ locals {
 }
 
 module "ami" {
-  source = "./module/ami"
+  source = "./module/AMI"
   count  = local.shared ? 0 : 1
 }
 
 module "availability_zones" {
-  source = "./module/az"
+  source = "./module/AZ"
 }
 
 module "gitfolio_network" {
@@ -43,10 +43,11 @@ module "gitfolio_node" {
   instance_types       = var.instance_types
   instance_indexes     = var.instance_indexes
   ssh_keys             = var.ssh_keys
+  module_indexes       = var.module_indexes
 
   on_front             = 1
   on_back              = 4
-  on_ai                = 0
+  on_ai                = 1
   on_master            = 0
   on_jenkins           = 0
   on_argo              = 0
@@ -54,7 +55,7 @@ module "gitfolio_node" {
 }
 
 module "gitfolio_db" {
-  source             = "./module/db"
+  source             = "./module/DB"
   count              = local.shared ? 0 : 1
 
   vpc_id             = data.terraform_remote_state.shared.outputs.vpc_id
@@ -66,6 +67,7 @@ module "gitfolio_db" {
   instance_types     = var.instance_types
   instance_indexes   = var.instance_indexes
   ssh_keys           = var.ssh_keys
+  module_indexes     = var.module_indexes
 }
 
 module "gitfolio_alb" {
@@ -77,6 +79,7 @@ module "gitfolio_alb" {
   any_ip               = var.any_ip
   frontend_id          = module.gitfolio_node[0].frontend_id
 
+  route53_domain       = var.route53_domain
   lb_type              = var.lb_type
   delete_protection    = var.delete_protection
   target_port          = var.target_port
@@ -92,7 +95,7 @@ module "gitfolio_alb" {
 }
 
 # module "gitfolio_ecr" {
-#   source           = "./module/ecr"
+#   source           = "./module/ECR"
 #   count            = local.shared ? 0 : 1
   
 #   ecr_repo_name    = var.ecr_repo_name

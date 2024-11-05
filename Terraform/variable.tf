@@ -55,58 +55,19 @@ variable "private_ips" {
   type        = map(string)
 }
 
-// 데이터베이스 변수
-variable "db_subnet_cidrs" {
-  description = "CIDR block for RDS subnet"
+variable "module_indexes" {
+  description = "Index of backend modules"
   type        = list(string)
 }
 
-variable identifier {
-  description = "RDS instance name"
-  type        = string
-}
-
-variable "engine" {
-  description = "Database engine"
-  type        = string
-}
-
-variable "engine_version" {
-  description = "Database engine version"
-  type        = string
-}
-
-variable "instance_class" {
-  description = "Database instance type"
-  type        = string
-}
-
-variable "allocated_storage" {
-  description = "Database allocated storage"
-  type        = number
-}
-
-variable "storage_type" {
-  description = "Database storage type"
-  type        = string
-}
-
-variable "db_name" {
-  description = "Database name"
-  type        = string
-}
-
-variable "db_username" {
-  description = "Database username"
-  type        = string
-}
-
-variable "db_password" {
-  description = "Database password"
-  type        = string
-}
+// 데이터베이스 변수
 
 // 로드 밸런서 변수
+variable "route53_domain" {
+  description = "Domain for route53"
+  type        = string
+}
+
 variable "lb_type" {
   description = "Type of load balancer"
   type        = string

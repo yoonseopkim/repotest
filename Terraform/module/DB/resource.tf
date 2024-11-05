@@ -5,7 +5,7 @@ resource "aws_instance" "db" {
   key_name               = var.ssh_keys["db"]
   subnet_id              = var.private_subnet_ids[var.instance_indexes["db"]]
   vpc_security_group_ids = [aws_security_group.all.id]
-  //private_ip             = var.private_ips["mongo"]
+  private_ip             = var.private_ips["db_${ var.module_indexes[count.index] }"]
   iam_instance_profile   = "gitfolio_ec2_iam_profile"
 
   root_block_device {
@@ -13,9 +13,10 @@ resource "aws_instance" "db" {
   }
   
   tags = {
-    Name = "Gitfolio DB${ count.index + 1}",
+    Name = "Gitfolio DB ${ var.module_indexes[count.index] }",
     Environment = terraform.workspace,
     Service = "db"
+    # Module = var.module_indexes[count.index]
   }
 }
 

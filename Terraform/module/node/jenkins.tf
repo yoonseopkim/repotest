@@ -13,7 +13,7 @@ resource "aws_instance" "jenkins" {
 }
 
 resource "aws_security_group" "jenkins" {
-  count = var.on_jenkins
+  count = var.on_jenkins == 0 ? 0 : 1
   name = "jenkins_sg"
   vpc_id = var.vpc_id
 
