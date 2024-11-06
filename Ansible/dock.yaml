@@ -1,0 +1,10 @@
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: Execute docker ps using shell
+    shell: docker ps -a
+    register: docker_ps_output
+
+  - name: Display shell command output
+    debug:
+      var: docker_ps_output.stdout_lines

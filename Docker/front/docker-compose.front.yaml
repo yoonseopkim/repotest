@@ -1,9 +1,10 @@
 services:
   frontend:
+    platform: linux/amd64
     build:
       context: ./
       dockerfile: dockerfile
-    image: aida0/gitfolio:front_test
+    image: aida0/gitfolio_front:test
     ports:
       - target: 3000
         published: 80

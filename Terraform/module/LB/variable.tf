@@ -13,6 +13,11 @@ variable "any_ip" {
   type        = string
 }
 
+variable "route53_domain" {
+  description = "Domain for route53"
+  type        = string
+}
+
 variable "lb_type" {
   description = "Type of load balancer"
   type        = string

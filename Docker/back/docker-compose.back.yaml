@@ -1,0 +1,10 @@
+services:
+  auth:
+    image: aida0/gitfolio_auth:test
+    ports:
+      - target: 8080
+        published: 80
+        protocol: tcp
+      - target: 8080
+        published: 443
+        protocol: tcp

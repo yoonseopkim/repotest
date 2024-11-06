@@ -13,7 +13,7 @@ resource "aws_instance" "master" {
 }
 
 resource "aws_security_group" "master" {
-  count = var.on_master
+  count = var.on_master == 0 ? 0 : 1
   name = "master_sg"
   vpc_id = var.vpc_id
 

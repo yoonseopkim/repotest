@@ -5,18 +5,19 @@ resource "aws_instance" "backend" {
   key_name      = var.ssh_keys["back"]
   subnet_id     = var.private_subnet_ids[var.instance_indexes["back"]]
   vpc_security_group_ids = [aws_security_group.back[0].id]
-  private_ip = var.private_ips["back"]
+  private_ip = var.private_ips["back_${ var.module_indexes[count.index] }"]
   iam_instance_profile   = "gitfolio_ec2_iam_profile"
   
   tags = {
-    Name = "Gitfolio Backend",
+    Name = "Gitfolio BE ${ var.module_indexes[count.index] }",
     Environment = terraform.workspace
-    Type = "back"
+    Service = "back"
+    Module = var.module_indexes[count.index]
   }
 }
 
 resource "aws_security_group" "back" {
-  count = var.on_back
+  count = var.on_back == 0 ? 0 : 1
   name = "back_sg"
   vpc_id = var.vpc_id
 

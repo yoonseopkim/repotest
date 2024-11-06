@@ -13,7 +13,7 @@ resource "aws_instance" "argo" {
 }
 
 resource "aws_security_group" "argo" {
-  count  = var.on_argo
+  count  = var.on_argo == 0 ? 0 : 1
   name = "argo_sg"
   vpc_id = var.vpc_id
 

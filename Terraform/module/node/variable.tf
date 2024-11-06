@@ -42,3 +42,8 @@ variable "any_ip" {
   description = "IP address for anywhere"
   type        = string
 }
+
+variable "module_indexes" {
+  description = "Index of backend modules"
+  type        = list(string)
+}

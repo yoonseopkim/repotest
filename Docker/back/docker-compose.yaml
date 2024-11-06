@@ -1,9 +1,6 @@
-volumes:
-  gradle-cache:
-  build-output:
-
 services:
   builder:
+    platform: linux/amd64
     build:
       context: ./
       dockerfile: dockerfile
@@ -11,70 +8,78 @@ services:
     volumes:
       - gradle-cache:/root/.gradle
       - build-output:/gitfolio_back/build
-    image: aida0/gitfolio:builder
+    image: aida0/gitfolio_builder:test
     profiles:
-      - builder
+      - build
 
   auth:
+    platform: linux/amd64
     build:
       context: ./gitfolio-auth
       dockerfile: dockerfile
-    volumes:
-       - build-output:/auth:ro
-    depends_on:
-      - builder
-    image: aida0/gitfolio:auth_test
+      target: runner
+    image: aida0/gitfolio_auth:test
     ports:
       - target: 8080
         published: 80
         protocol: tcp
+      - target: 8080
+        published: 443
+        protocol: tcp
     profiles:
-      - auth
+      - run
 
   member:
+    platform: linux/amd64
     build:
       context: ./gitfolio-member
       dockerfile: dockerfile
-    volumes:
-       - build-output:/member:ro
-    depends_on:
-      - builder
-    image: aida0/gitfolio:member_test
+      target: runner
+    image: aida0/gitfolio_member:test
     ports:
-      - target: 8081
+      - target: 8080
         published: 80
         protocol: tcp
+      - target: 8080
+        published: 443
+        protocol: tcp
     profiles:
-      - runner
+      - run
 
   payment:
+    platform: linux/amd64
     build:
       context: ./gitfolio-payment
       dockerfile: dockerfile
-    volumes:
-      - build-output:/payment:ro
-    depends_on:
-      - builder
-    image: aida0/gitfolio:payment_test
+      target: runner
+    image: aida0/gitfolio_payment:test
     ports:
-      - target: 8082
+      - target: 8080
         published: 80
         protocol: tcp
+      - target: 8080
+        published: 443
+        protocol: tcp
     profiles:
-      - runner
+      - run
 
   resume:
+    platform: linux/amd64
     build:
       context: ./gitfolio-resume
       dockerfile: dockerfile
-    volumes:
-      - build-output:/resume:ro
-    depends_on:
-      - builder
-    image: aida0/gitfolio:resume_test
+      target: runner
+    image: aida0/gitfolio_resume:test
     ports:
-      - target: 8083
+      - target: 8080
         published: 80
         protocol: tcp
+      - target: 8080
+        published: 443
+        protocol: tcp
     profiles:
-      - runner
+      - run
+
+volumes:
+  gradle-cache:
+  build-output:

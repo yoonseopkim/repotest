@@ -1,7 +1,7 @@
 resource "aws_instance" "ai" {
   count                  = var.on_ai
   ami                    = var.ami_id
-  instance_type          = var.instance_types["low"]
+  instance_type          = var.instance_types["micro"]
   key_name               = var.ssh_keys["ai"]
   subnet_id              = var.private_subnet_ids[var.instance_indexes["ai"]]
   vpc_security_group_ids = [aws_security_group.ai[0].id]
@@ -10,11 +10,13 @@ resource "aws_instance" "ai" {
   
   tags = {
     Name = "Gitfolio AI"
+    Environment = terraform.workspace
+    Service = "ai"
   }
 }
 
 resource "aws_security_group" "ai" {
-  count = var.on_ai
+  count = var.on_ai == 0 ? 0 : 1
   name = "ai_sg"
   vpc_id = var.vpc_id
 
@@ -38,6 +40,14 @@ resource "aws_security_group" "ai" {
     description = "HTTPS"
     from_port = 443
     to_port = 443
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  ingress {
+    description = "FastAPI"
+    from_port = 8000
+    to_port = 8000
     protocol = "tcp"
     cidr_blocks = [var.any_ip]
   }
