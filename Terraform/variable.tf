@@ -153,3 +153,9 @@ variable "policy_countNum" {
   description  = "Count number of ECR lifecycle policy"
   type         = number
 }
+
+// 기타 변수
+variable "workspace_index" {
+  description = "Index of workspace"
+  type        = map(number)
+}

@@ -2,12 +2,16 @@ services:
   {{ ansible_host_namespace }}:
     platform: linux/amd64
     image: aida0/gitfolio_{{ ansible_host_namespace }}:test
+    container_name: gitfolio_{{ ansible_host_namespace }}
     ports:
       - target: {{ ansible_host_port }}
         published: 80
         protocol: tcp
       - target: {{ ansible_host_port }}
         published: 443
+        protocol: tcp
+      - target: {{ ansible_host_port }}
+        published: 5000
         protocol: tcp
     networks:
       - {{ ansible_network_namespace }}

@@ -41,6 +41,14 @@ resource "aws_security_group" "ingress" {
     cidr_blocks = [var.any_ip]
   }
 
+  ingress {
+    description = "Gitfolio API"
+    from_port = 5000
+    to_port = 5000
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+  
   egress {
     from_port = 0
     to_port = 0

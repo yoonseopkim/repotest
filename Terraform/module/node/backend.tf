@@ -46,6 +46,14 @@ resource "aws_security_group" "back" {
   }
 
   ingress {
+    description = "Gitfolio API"
+    from_port = 5000
+    to_port = 5000
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  ingress {
     description = "Spring"
     from_port = 8080
     to_port = 8080

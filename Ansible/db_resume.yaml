@@ -1,0 +1,55 @@
+- hosts: db_resume
+  tasks:
+  - name: Write docker-compose.yaml
+    copy:
+      dest: "{{ ansible_home_dir }}/docker-compose.yaml"
+      content: |
+        services:
+          mysql:
+            image: mysql:8.0
+            container_name: mysql-resume
+            environment:
+              MYSQL_ROOT_PASSWORD: dydrkfl11!
+              MYSQL_DATABASE: gitfolio_resume
+            ports:
+              - target: 3306
+                published: 3306
+                protocol: tcp
+            networks:
+              - back
+        
+          mongo:
+            image: mongo:5.0
+            container_name: mongo-resume
+            ports:
+              - target: 27017
+                published: 27017
+                protocol: tcp
+            environment:
+              MONGO_INITDB_DATABASE: gitfolio_resume
+            networks:
+              - back
+        
+          redis:
+            image: redis:alpine
+            container_name: redis-resume
+            ports:
+              - target: 6379
+                published: 6379
+                protocol: tcp
+            networks:
+              - back
+        
+        networks:
+          back:
+            driver: overlay
+            attachable: true
+
+  - name: Initialize Docker Swarm
+    shell: docker swarm init
+    ignore_errors: yes
+    
+  - name: Start docker-compose.yaml
+    shell: docker-compose up -d
+    args:
+      chdir: "{{ ansible_home_dir }}"

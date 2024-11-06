@@ -14,19 +14,19 @@ module "availability_zones" {
 module "gitfolio_network" {
   source               = "./module/network"
   
-  vpc_cidr             = var.vpc_cidr
-  public_subnet_cidrs  = var.public_subnet_cidrs
-  nat_subnet_cidr      = var.nat_cidr
-  private_subnet_cidrs = var.private_subnet_cidrs
-  availability_zones   = module.availability_zones.az
-  any_ip               = var.any_ip
-  
-  instance_names       = var.instance_names
+  vpc_cidr              = var.vpc_cidr
+  public_subnet_cidrs   = var.public_subnet_cidrs
+  nat_subnet_cidr       = var.nat_cidr
+  private_subnet_cidrs  = var.private_subnet_cidrs
+  availability_zones    = module.availability_zones.az
+  any_ip                = var.any_ip
+
+  instance_names        = var.instance_names
 
   public_route_table_id = local.shared ? null : data.terraform_remote_state.shared.outputs.public_route_table_id
-  vpc_id               = local.shared ? null : data.terraform_remote_state.shared.outputs.vpc_id
-  igw_id               = local.shared ? null : data.terraform_remote_state.shared.outputs.igw_id
-  nat_id               = local.shared ? null : data.terraform_remote_state.shared.outputs.nat_id
+  vpc_id                = local.shared ? null : data.terraform_remote_state.shared.outputs.vpc_id
+  igw_id                = local.shared ? null : data.terraform_remote_state.shared.outputs.igw_id
+  nat_id                = local.shared ? null : data.terraform_remote_state.shared.outputs.nat_id
 }
 
 module "gitfolio_node" {
@@ -78,6 +78,8 @@ module "gitfolio_alb" {
   public_subnet_ids    = module.gitfolio_network.public_subnet_ids
   any_ip               = var.any_ip
   frontend_id          = module.gitfolio_node[0].frontend_id
+  backend_auth_id      = module.gitfolio_node[0].backend_auth_id
+  ai_id                = module.gitfolio_node[0].ai_id
 
   route53_domain       = var.route53_domain
   lb_type              = var.lb_type

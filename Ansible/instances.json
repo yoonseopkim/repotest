@@ -1,0 +1,72 @@
+[
+  {
+    "Name": "Gitfolio Frontend",
+    "InstanceId": "i-08277b1e46361e1a9",
+    "Service": "front",
+    "Type": null,
+    "Environment": "dev"
+  },
+  {
+    "Name": "Gitfolio BE member",
+    "InstanceId": "i-00ac4683665b6cae8",
+    "Service": "back",
+    "Type": null,
+    "Environment": "dev"
+  },
+  {
+    "Name": "Gitfolio BE payment",
+    "InstanceId": "i-097ebe502a6096636",
+    "Service": "back",
+    "Type": null,
+    "Environment": "dev"
+  },
+  {
+    "Name": "Gitfolio BE resume",
+    "InstanceId": "i-0a30086e97f170db1",
+    "Service": "back",
+    "Type": null,
+    "Environment": "dev"
+  },
+  {
+    "Name": "Gitfolio BE auth",
+    "InstanceId": "i-0f4dbbeef6b2d43da",
+    "Service": "back",
+    "Type": null,
+    "Environment": "dev"
+  },
+  {
+    "Name": "Gitfolio AI",
+    "InstanceId": "i-06401c2371916913a",
+    "Service": "ai",
+    "Type": null,
+    "Environment": "dev"
+  },
+  {
+    "Name": "Gitfolio DB auth",
+    "InstanceId": "i-0bb70b5d48addb292",
+    "Service": "db",
+    "Type": null,
+    "Environment": "dev"
+  },
+  {
+    "Name": "Gitfolio DB payment",
+    "InstanceId": "i-0c093d37f9b2b03bd",
+    "Service": "db",
+    "Type": null,
+    "Environment": "dev"
+  },
+  {
+    "Name": "Gitfolio DB member",
+    "InstanceId": "i-0ae8bc68d9bd7436f",
+    "Service": "db",
+    "Type": null,
+    "Environment": "dev"
+  },
+  {
+    "Name": "Gitfolio DB resume",
+    "InstanceId": "i-0b84bd67027cee481",
+    "Service": "db",
+    "Type": null,
+    "Environment": "dev"
+  }
+]

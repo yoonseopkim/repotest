@@ -45,6 +45,14 @@ resource "aws_security_group" "front" {
   }
 
   ingress {
+    description = "Gitfolio API"
+    from_port = 5000
+    to_port = 5000
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+  
+  ingress {
     description = "NextJS"
     from_port = 3000
     to_port = 3000

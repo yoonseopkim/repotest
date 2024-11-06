@@ -82,3 +82,13 @@ variable "frontend_id" {
   description = "ID of frontend instance"
   type        = string
 }
+
+variable "backend_auth_id" {
+  description = "ID of backend auth module instance"
+  type        = string
+}
+
+variable "ai_id" {
+  description = "ID of ai instance"
+  type        = string
+}

@@ -1,6 +1,21 @@
 - hosts: all
   gather_facts: no
   tasks:
+  # - name: down containers
+  #   shell: docker-compose down -v --rmi all
+  #   args:
+  #     chdir: "{{ ansible_home_dir }}"
+
+  # - name: Write docker-compose.yaml
+  #   template:
+  #     src: docker-compose.yaml.j2
+  #     dest: "{{ ansible_home_dir }}/docker-compose.yaml"
+
+  # - name: up containers
+  #   shell: docker-compose up -d
+  #   args:
+  #     chdir: "{{ ansible_home_dir }}"
+      
   - name: Execute docker ps using shell
     shell: docker ps -a
     register: docker_ps_output

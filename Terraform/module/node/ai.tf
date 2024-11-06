@@ -45,6 +45,14 @@ resource "aws_security_group" "ai" {
   }
 
   ingress {
+    description = "Gitfolio API"
+    from_port = 5000
+    to_port = 5000
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  ingress {
     description = "FastAPI"
     from_port = 8000
     to_port = 8000

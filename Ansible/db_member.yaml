@@ -1,4 +1,4 @@
-- hosts: db
+- hosts: db_member
   tasks:
   - name: Write docker-compose.yaml
     copy:
@@ -7,17 +7,17 @@
         services:
           mysql:
             image: mysql:8.0
-            container_name: mysql-notification
+            container_name: mysql-member
             environment:
               MYSQL_ROOT_PASSWORD: dydrkfl11!
-              MYSQL_DATABASE: gitfolio_notification
+              MYSQL_DATABASE: gitfolio_member
             ports:
               - target: 3306
                 published: 3306
                 protocol: tcp
             networks:
               - back
-
+        
           mongo:
             image: mongo:5.0
             container_name: mongo-member
@@ -29,17 +29,7 @@
               MONGO_INITDB_DATABASE: gitfolio_member
             networks:
               - back
-
-          redis:
-            image: redis:alpine
-            container_name: redis-resume
-            ports:
-              - target: 6379
-                published: 6379
-                protocol: tcp
-            networks:
-              - back
-
+        
         networks:
           back:
             driver: overlay

@@ -1,4 +1,5 @@
 locals {
+  init   = terraform.workspace =="init"
   shared = terraform.workspace == "shared"
 }
 
@@ -13,7 +14,7 @@ resource "aws_vpc" "gitfolio" {
 }
 
 resource "aws_subnet" "public" {
-  count             = local.shared ? 0 : length(var.public_subnet_cidrs)
+  count             = local.init || local.shared ? 0 : length(var.public_subnet_cidrs)
   vpc_id            = var.vpc_id
   cidr_block        = var.public_subnet_cidrs[count.index]
   availability_zone = var.availability_zones[count.index % 2]
@@ -36,7 +37,7 @@ resource "aws_subnet" "nat" {
 }
 
 resource "aws_subnet" "private" {
-  count             = local.shared ? 0 : length(var.private_subnet_cidrs)
+  count             = local.init || local.shared ? 0 : length(var.private_subnet_cidrs)
   vpc_id            = var.vpc_id
   cidr_block        = var.private_subnet_cidrs[count.index]
   availability_zone = var.availability_zones[count.index % 2]
@@ -91,7 +92,7 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table" "private" {
-  count  = local.shared ? 0 : 1
+  count  = local.init || local.shared ? 0 : 1
   vpc_id = var.vpc_id
 
   route {
@@ -105,7 +106,7 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "public" {
-  count          = local.shared ? 0 : length(aws_subnet.public)
+  count          = local.init || local.shared ? 0 : length(aws_subnet.public)
   subnet_id      = aws_subnet.public[count.index].id
   route_table_id = var.public_route_table_id
 }
@@ -117,7 +118,7 @@ resource "aws_route_table_association" "nat" {
 }
 
 resource "aws_route_table_association" "private" {
-  count          = local.shared ? 0 : length(aws_subnet.private)
+  count          = local.init || local.shared ? 0 : length(aws_subnet.private)
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private[0].id
 }

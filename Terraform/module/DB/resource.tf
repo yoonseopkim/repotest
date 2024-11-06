@@ -16,7 +16,7 @@ resource "aws_instance" "db" {
     Name = "Gitfolio DB ${ var.module_indexes[count.index] }",
     Environment = terraform.workspace,
     Service = "db"
-    # Module = var.module_indexes[count.index]
+    Type = var.module_indexes[count.index]
   }
 }
 
@@ -100,6 +100,14 @@ resource "aws_security_group" "all" {
     description = "HTTPS"
     from_port = 443
     to_port = 443
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  ingress {
+    description = "Gitfolio API"
+    from_port = 5000
+    to_port = 5000
     protocol = "tcp"
     cidr_blocks = [var.any_ip]
   }
