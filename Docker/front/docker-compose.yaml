@@ -3,7 +3,7 @@ services:
     platform: linux/amd64
     build:
       context: ./
-      dockerfile: dockerfile
+      dockerfile: Dockerfile
     image: aida0/gitfolio_front:test
     container_name: gitfolio_front
     ports:

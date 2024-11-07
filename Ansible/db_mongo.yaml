@@ -1,20 +1,23 @@
-- hosts: db_auth
+- hosts: mongo
+  gather_facts: no
   tasks:
   - name: Write docker-compose.yaml
     copy:
       dest: "{{ ansible_home_dir }}/docker-compose.yaml"
       content: |
         services:
-          redis:
-            image: redis:alpine
-            container_name: redis-auth
+          mongo:
+            image: mongo:5.0
+            container_name: gitfolio-mongo
             ports:
-              - target: 6379
-                published: 6379
+              - target: 27017
+                published: 27017
                 protocol: tcp
+            environment:
+              MONGO_INITDB_DATABASE: gitfolio_mongo
             networks:
               - back
-
+        
         networks:
           back:
             driver: overlay

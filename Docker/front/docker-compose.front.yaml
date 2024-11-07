@@ -1,0 +1,22 @@
+services:
+  front:
+    platform: linux/amd64
+    image: aida0/gitfolio_{{ ansible_host_namespace }}:test
+    container_name: gitfolio_{{ ansible_host_namespace }}
+    ports:
+      - target: 3000
+        published: 80
+        protocol: tcp
+      - target: 3000
+        published: 443
+        protocol: tcp
+      - target: 3000
+        published: 5000
+        protocol: tcp
+    networks:
+      - front
+      
+networks:
+  front:
+    driver: overlay
+    attachable: true

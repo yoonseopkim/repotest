@@ -1,72 +1,50 @@
 [
   {
     "Name": "Gitfolio Frontend",
-    "InstanceId": "i-08277b1e46361e1a9",
+    "InstanceId": "i-05fbc4192961ccf9e",
+    "IP": "10.0.104.33",
     "Service": "front",
     "Type": null,
     "Environment": "dev"
   },
   {
-    "Name": "Gitfolio BE member",
-    "InstanceId": "i-00ac4683665b6cae8",
+    "Name": "Gitfolio BE1",
+    "InstanceId": "i-004a93082f8aa6f05",
+    "IP": "10.0.105.44",
     "Service": "back",
     "Type": null,
     "Environment": "dev"
   },
   {
-    "Name": "Gitfolio BE payment",
-    "InstanceId": "i-097ebe502a6096636",
-    "Service": "back",
-    "Type": null,
-    "Environment": "dev"
-  },
-  {
-    "Name": "Gitfolio BE resume",
-    "InstanceId": "i-0a30086e97f170db1",
-    "Service": "back",
-    "Type": null,
-    "Environment": "dev"
-  },
-  {
-    "Name": "Gitfolio BE auth",
-    "InstanceId": "i-0f4dbbeef6b2d43da",
+    "Name": "Gitfolio BE2",
+    "InstanceId": "i-07efdc78e9046715b",
+    "IP": "10.0.105.75",
     "Service": "back",
     "Type": null,
     "Environment": "dev"
   },
   {
     "Name": "Gitfolio AI",
-    "InstanceId": "i-06401c2371916913a",
+    "InstanceId": "i-0d2c330f53f671c49",
+    "IP": "10.0.106.88",
     "Service": "ai",
     "Type": null,
     "Environment": "dev"
   },
   {
-    "Name": "Gitfolio DB auth",
-    "InstanceId": "i-0bb70b5d48addb292",
+    "Name": "Gitfolio MongoDB",
+    "InstanceId": "i-05f94f8f5bc3f3d5b",
+    "IP": "10.0.109.14",
     "Service": "db",
-    "Type": null,
-    "Environment": "dev"
+    "Type": "mongo",
+    "Environment": "shared"
   },
   {
-    "Name": "Gitfolio DB payment",
-    "InstanceId": "i-0c093d37f9b2b03bd",
+    "Name": "Gitfolio Redis",
+    "InstanceId": "i-082b170027ce4dfda",
+    "IP": "10.0.110.38",
     "Service": "db",
-    "Type": null,
-    "Environment": "dev"
-  },
-  {
-    "Name": "Gitfolio DB member",
-    "InstanceId": "i-0ae8bc68d9bd7436f",
-    "Service": "db",
-    "Type": null,
-    "Environment": "dev"
-  },
-  {
-    "Name": "Gitfolio DB resume",
-    "InstanceId": "i-0b84bd67027cee481",
-    "Service": "db",
-    "Type": null,
-    "Environment": "dev"
+    "Type": "redis",
+    "Environment": "shared"
   }
 ]

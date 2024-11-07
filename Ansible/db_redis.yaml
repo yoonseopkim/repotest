@@ -1,23 +1,21 @@
-- hosts: db_payment
+- hosts: redis
+  gather_facts: no
   tasks:
   - name: Write docker-compose.yaml
     copy:
       dest: "{{ ansible_home_dir }}/docker-compose.yaml"
       content: |
         services:
-          mysql:
-            image: mysql:8.0
-            container_name: mysql-payment
-            environment:
-              MYSQL_ROOT_PASSWORD: dydrkfl11!
-              MYSQL_DATABASE: gitfolio_payment
+          redis:
+            image: redis:alpine
+            container_name: gitfolio-redis
             ports:
-              - target: 3306
-                published: 3306
+              - target: 6379
+                published: 6379
                 protocol: tcp
             networks:
               - back
-        
+
         networks:
           back:
             driver: overlay
