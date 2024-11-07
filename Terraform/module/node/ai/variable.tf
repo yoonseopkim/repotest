@@ -38,12 +38,12 @@ variable "private_ips" {
   type        = map(string)
 }
 
-variable "any_ip" {
-  description = "IP address for anywhere"
-  type        = string
+variable "security_group_ids" {
+  description = "Security group IDs"
+  type        = map(string)  
 }
 
-variable "module_indexes" {
-  description = "Index of backend modules"
-  type        = list(string)
+variable "iam_instance_profile" {
+  description = "IAM instance profile"
+  type        = string
 }
