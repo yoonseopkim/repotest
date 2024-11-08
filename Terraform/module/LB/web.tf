@@ -65,7 +65,7 @@ resource "aws_lb_listener_rule" "ai_routing" {
 
   condition {
     path_pattern {
-      values = ["/docs/*"]
+      values = ["/docs/*", "/docs", "/openapi.json"]
     }
   }
 
