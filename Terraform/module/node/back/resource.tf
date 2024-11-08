@@ -3,7 +3,7 @@ resource "aws_instance" "backend" {
   instance_type          = var.instance_types["micro"]
   key_name               = var.ssh_keys["back"]
   subnet_id              = var.private_subnet_ids[var.instance_indexes["back"]]
-  vpc_security_group_ids = [var.security_group_ids["web"]]
+  vpc_security_group_ids = [var.security_group_ids["base"], var.security_group_ids["back"]]
   private_ip             = var.private_ips["back${ var.node_index + 1 }"]
   iam_instance_profile   = var.iam_instance_profile
   

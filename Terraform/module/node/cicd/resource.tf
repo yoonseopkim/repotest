@@ -3,7 +3,7 @@ resource "aws_instance" "jenkins" {
   instance_type = var.instance_types["high"]
   key_name      = var.ssh_keys["jenkins"]
   subnet_id     = var.private_subnet_ids[var.instance_indexes["jenkins"]]
-  vpc_security_group_ids = [var.security_group_ids["cicd"]]
+  vpc_security_group_ids = [var.security_group_ids["base"], var.security_group_ids["cicd"]]
   private_ip = var.private_ips["jenkins"]
   
   tags = {

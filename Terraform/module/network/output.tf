@@ -41,9 +41,11 @@ output "public_route_table_id" {
 output "security_group_ids" {
   description = "ID of the security group"
   value       = {
-    "web"        = aws_security_group.web.id,
+    "base"       = aws_security_group.base.id,
+    "back"       = aws_security_group.back.id,
     "rds"        = aws_security_group.rds.id,
-    "nosql"      = aws_security_group.nosql.id,
+    "mongo"      = aws_security_group.mongo.id,
+    "redis"      = aws_security_group.redis.id,
     "cicd"       = aws_security_group.cicd.id,
     "kubernetes" = aws_security_group.kubernetes.id
   }

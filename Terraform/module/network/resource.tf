@@ -139,8 +139,8 @@ resource "aws_route_table_association" "rds" {
   route_table_id = aws_route_table.private.id
 }
 
-resource "aws_security_group" "web" {
-  name = "web_sg"
+resource "aws_security_group" "base" {
+  name = "base_sg"
   vpc_id = aws_vpc.gitfolio.id
 
   ingress {
@@ -163,22 +163,6 @@ resource "aws_security_group" "web" {
     description = "HTTPS"
     from_port = 443
     to_port = 443
-    protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
-
-  ingress {
-    description = "Gitfolio API"
-    from_port = 5000
-    to_port = 5000
-    protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
-
-  ingress {
-    description = "Backend"
-    from_port = 8080
-    to_port = 8081
     protocol = "tcp"
     cidr_blocks = [var.any_ip]
   }
@@ -191,45 +175,32 @@ resource "aws_security_group" "web" {
   }
 
   tags = {
-    Name = "Gitfolio web security group"
+    Name = "Gitfolio base security group"
   }
+}
+
+resource "aws_security_group" "back" {
+  name = "back_sg"
+  vpc_id = aws_vpc.gitfolio.id
+
+  tags = {
+    Name = "Gitfolio backend security group"
+  }
+}
+
+resource "aws_security_group_rule" "back_rds" {
+  description              = "MySQL"
+  type                     = "egress"
+  from_port                = 3306
+  to_port                  = 3306
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.rds.id
+  security_group_id        = aws_security_group.back.id
 }
 
 resource "aws_security_group" "cicd" {
   name = "cicd_sg"
   vpc_id = aws_vpc.gitfolio.id
-
-  ingress {
-    description = "ssh"
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
-
-  ingress {
-    description = "HTTP"
-    from_port = 80
-    to_port = 80
-    protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
-
-  ingress {
-    description = "HTTPS"
-    from_port = 443
-    to_port = 443
-    protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
-
-  ingress {
-    description = "Gitfolio API"
-    from_port = 5000
-    to_port = 5000
-    protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
   
   egress {
     from_port = 0
@@ -246,51 +217,12 @@ resource "aws_security_group" "cicd" {
 resource "aws_security_group" "kubernetes" {
   name = "kubernetes_sg"
   vpc_id = aws_vpc.gitfolio.id
-
-  ingress {
-    description = "ssh"
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
-
-  ingress {
-    description = "HTTP"
-    from_port = 80
-    to_port = 80
-    protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
-
-  ingress {
-    description = "HTTPS"
-    from_port = 443
-    to_port = 443
-    protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
-
-  ingress {
-    description = "Gitfolio API"
-    from_port = 5000
-    to_port = 5000
-    protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
   
   ingress {
     description = "Kubernetes API"
     from_port = 6443
     to_port = 6443
     protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
-
-  egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
     cidr_blocks = [var.any_ip]
   }
 
@@ -309,13 +241,7 @@ resource "aws_security_group" "rds" {
     to_port = 3306
     protocol = "tcp"
     cidr_blocks = [var.any_ip]
-  }
-
-  egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_blocks = [var.any_ip]
+    security_groups = [aws_security_group.back.id]
   }
 
   tags = {
@@ -323,49 +249,9 @@ resource "aws_security_group" "rds" {
   }
 }
 
-resource "aws_security_group" "nosql" {
-  name = "nosql_sg"
+resource "aws_security_group" "mongo" {
+  name = "mongo_sg"
   vpc_id = aws_vpc.gitfolio.id
-
-  ingress {
-    description = "ssh"
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
-
-  ingress {
-    description = "HTTP"
-    from_port = 80
-    to_port = 80
-    protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
-
-  ingress {
-    description = "HTTPS"
-    from_port = 443
-    to_port = 443
-    protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
-
-  ingress {
-    description = "Gitfolio API"
-    from_port = 5000
-    to_port = 5000
-    protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
-
-  ingress {
-    description = "Redis"
-    from_port = 6379
-    to_port = 6379
-    protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
 
   ingress {
     description = "MongoDB"
@@ -375,14 +261,24 @@ resource "aws_security_group" "nosql" {
     cidr_blocks = [var.any_ip]
   }
 
-  egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
+  tags = {
+    Name = "Gitfolio MongoDB security group"
+  }
+}
+
+resource "aws_security_group" "redis" {
+  name = "redis_sg"
+  vpc_id = aws_vpc.gitfolio.id
+
+  ingress {
+    description = "Redis"
+    from_port = 6379
+    to_port = 6379
+    protocol = "tcp"
     cidr_blocks = [var.any_ip]
   }
 
   tags = {
-    Name = "Gitfolio NoSQL security group"
+    Name = "Gitfolio Redis security group"
   }
 }

@@ -44,6 +44,8 @@ resource "aws_lb_target_group_attachment" "mongo" {
   target_id        = var.mongo_id
 }
 
+// =====================================================================
+
 resource "aws_lb_listener" "redis" {
   load_balancer_arn = aws_lb.alb.arn
   port              = 6379                             // 클라이언트가 LB에 접근하는 포트(클라이언트->LB)
