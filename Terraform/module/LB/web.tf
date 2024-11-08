@@ -29,7 +29,7 @@ resource "aws_lb_target_group" "alb_auth" {
     healthy_threshold   = var.health_threshold
     interval            = var.health_interval
     matcher             = var.health_matcher
-    path                = var.health_path
+    path                = format("%slogin", var.health_path)
     port                = var.health_port
     protocol            = var.health_protocol
     timeout             = var.health_timeout

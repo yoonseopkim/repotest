@@ -159,6 +159,17 @@ module "gitfolio_alb" {
 
 // ============================================================================================================
 
+module "gitfolio_route53" {
+  source               = "./module/Route53"
+  count                = local.shared ? 0 : 1
+
+  route53_domain       = var.route53_domain
+  alb_dns_name         = module.gitfolio_alb[0].alb_dns_name
+  alb_zone_id          = module.gitfolio_alb[0].alb_zone_id
+}
+
+// ============================================================================================================
+
 // Container
 # module "gitfolio_ecr" {
 #   source           = "./module/ECR"
