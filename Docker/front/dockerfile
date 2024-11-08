@@ -1,34 +1,49 @@
-FROM node:20-alpine AS builder
+# 기본 Node.js 이미지 사용
+FROM node:20.4-alpine AS base
 
-WORKDIR /gitfolio_front
+# 의존성 설치 단계
+FROM base AS builder
+WORKDIR /app
 
-COPY package*.json /gitfolio_front
+# 패키지 파일 복사
+COPY package*.json ./
 
-RUN npm install -g next
-RUN npm ci
+# 의존성 설치
+RUN npm ci && \
+    npm cache clean --force
 
+# 소스 코드 복사
 COPY . .
 
-RUN npm run build
+# Next.js 빌드
+RUN CI=false npm run build
 
-####################################
+# 프로덕션 이미지 생성
+FROM base AS runner
+WORKDIR /app
 
-FROM node:20-alpine AS runner
+# 환경변수 설정
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1 \
+    PORT=3000 \
+    HOST=0.0.0.0
 
-WORKDIR /gitfolio_front
+# 시스템 의존성 설치 및 사용자 생성
+RUN addgroup -S -g 1001 nodejs && \
+    adduser -S -u 1001 -G nodejs nextjs && \
+    chown -R nextjs:nodejs /app
 
-ENV NODE_ENV production
-ENV PORT 3000
+# 빌드 파일 복사
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 
-EXPOSE 3000
-
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-RUN chown -R nextjs:nodejs /gitfolio_front
-
+# 사용자 전환
 USER nextjs
 
-COPY --from=builder /gitfolio_front .
+# 포트 설정
+EXPOSE 3000
 
-CMD ["npm", "run", "start"]
+# 서버 실행
+CMD ["npm", "start"]
