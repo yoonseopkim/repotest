@@ -9,7 +9,7 @@
   },
   {
     "Name": "Gitfolio BE1",
-    "InstanceId": "i-0cc8d189b96dc1cdf",
+    "InstanceId": "i-014da960a34df03c7",
     "IP": "10.0.105.44",
     "Service": "back",
     "Type": null,
@@ -17,7 +17,7 @@
   },
   {
     "Name": "Gitfolio BE2",
-    "InstanceId": "i-0f2d7f50792b0be19",
+    "InstanceId": "i-04229a687a19ebdc6",
     "IP": "10.0.105.75",
     "Service": "back",
     "Type": null,

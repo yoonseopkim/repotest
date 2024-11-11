@@ -154,7 +154,7 @@ resource "aws_security_group" "base" {
   ingress {
     description = "HTTP"
     from_port = 80
-    to_port = 80
+    to_port = 81
     protocol = "tcp"
     cidr_blocks = [var.any_ip]
   }
@@ -162,7 +162,7 @@ resource "aws_security_group" "base" {
   ingress {
     description = "HTTPS"
     from_port = 443
-    to_port = 443
+    to_port = 444
     protocol = "tcp"
     cidr_blocks = [var.any_ip]
   }
@@ -186,16 +186,6 @@ resource "aws_security_group" "back" {
   tags = {
     Name = "Gitfolio backend security group"
   }
-}
-
-resource "aws_security_group_rule" "back_rds" {
-  description              = "MySQL"
-  type                     = "egress"
-  from_port                = 3306
-  to_port                  = 3306
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.rds.id
-  security_group_id        = aws_security_group.back.id
 }
 
 resource "aws_security_group" "cicd" {
