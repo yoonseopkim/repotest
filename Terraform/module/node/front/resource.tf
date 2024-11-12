@@ -11,5 +11,6 @@ resource "aws_instance" "frontend" {
     Name = "Gitfolio Frontend",
     Environment = terraform.workspace,
     Service = "front"
+    Type = "ec2"
   }
 }

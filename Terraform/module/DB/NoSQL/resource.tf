@@ -18,8 +18,8 @@ resource "aws_instance" "nosql" {
   tags = {
     Name = var.node_index == 0 ? "Gitfolio MongoDB" : "Gitfolio Redis",
     Environment = terraform.workspace,
-    Service = "db",
-    Type = local.index
+    Service = local.index,
+    Type = "db"
   }
 }
 

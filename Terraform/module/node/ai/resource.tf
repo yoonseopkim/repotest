@@ -11,5 +11,6 @@ resource "aws_instance" "ai" {
     Name = "Gitfolio AI"
     Environment = terraform.workspace
     Service = "ai"
+    Type = "ec2"
   }
 }

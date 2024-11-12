@@ -144,14 +144,6 @@ resource "aws_security_group" "base" {
   vpc_id = aws_vpc.gitfolio.id
 
   ingress {
-    description = "ssh"
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
-
-  ingress {
     description = "HTTP"
     from_port = 80
     to_port = 81
@@ -191,13 +183,6 @@ resource "aws_security_group" "back" {
 resource "aws_security_group" "cicd" {
   name = "cicd_sg"
   vpc_id = aws_vpc.gitfolio.id
-  
-  egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_blocks = [var.any_ip]
-  }
 
   tags = {
     Name = "Gitfolio CI/CD security group"

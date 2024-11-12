@@ -1,6 +1,6 @@
 resource "aws_instance" "backend" {
   ami                    = var.ami_id
-  instance_type          = var.instance_types["micro"]
+  instance_type          = var.instance_types["low"]
   key_name               = var.ssh_keys["back"]
   subnet_id              = var.private_subnet_ids[var.instance_indexes["back"]]
   vpc_security_group_ids = [var.security_group_ids["base"], var.security_group_ids["back"]]
@@ -12,5 +12,6 @@ resource "aws_instance" "backend" {
     Environment = terraform.workspace
     Service = "back"
     Index = var.node_index + 1
+    Type = "ec2"
   }
 }
