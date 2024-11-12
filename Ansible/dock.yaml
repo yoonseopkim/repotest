@@ -1,20 +1,15 @@
-- hosts: back1
+- hosts: front
   gather_facts: no
   tasks:
   - name: down containers
-    shell: docker-compose down -v
+    shell: docker-compose down -v --rmi all
     args:
       chdir: "{{ ansible_home_dir }}"
 
-  # - name: pull containers
-  #   shell: docker-compose pull
-  #   args:
-  #     chdir: "{{ ansible_home_dir }}"
-
-  # - name: Write docker-compose.yaml
-  #   template:
-  #     src: docker-compose.yaml.j2
-  #     dest: "{{ ansible_home_dir }}/docker-compose.yaml"
+  - name: pull containers
+    shell: docker-compose pull
+    args:
+      chdir: "{{ ansible_home_dir }}"
 
   - name: up containers
     shell: docker-compose up -d
