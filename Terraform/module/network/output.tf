@@ -1,34 +1,52 @@
 output "vpc_id" {
   description = "ID of the created VPC"
-  value       = local.shared ? aws_vpc.gitfolio[0].id : null
+  value       = aws_vpc.gitfolio.id
 }
 
 output "public_subnet_ids" {
   description = "IDs of the public subnets"
-  value       = local.shared ? null : aws_subnet.public[*].id
+  value       = aws_subnet.public[*].id
 }
 
 output "nat_subnet_id" {
   description = "ID of the nat subnet"
-  value       = local.shared ? aws_subnet.nat[0].id : null
+  value       = aws_subnet.nat.id
 }
 
 output "private_subnet_ids" {
   description = "IDs of the private subnets"
-  value       = local.shared ? null : aws_subnet.private[*].id
+  value       = aws_subnet.private[*].id
+}
+
+output "rds_subnet_group_name" {
+  description = "Name of the RDS subnet group"
+  value       = aws_db_subnet_group.rds.name
 }
 
 output "igw_id" {
   description = "ID of the internet gateway"
-  value       = local.shared ? aws_internet_gateway.igw[0].id : null
+  value       = aws_internet_gateway.igw.id
 }
 
 output "nat_id" {
   description = "ID of the nat gateway"
-  value       = local.shared ? aws_nat_gateway.nat[0].id : null
+  value       = aws_nat_gateway.nat.id
 }
 
 output "public_route_table_id" {
   description = "ID of the public route table"
-  value       = local.shared ? aws_route_table.public[0].id : null
+  value       = aws_route_table.public.id
+}
+
+output "security_group_ids" {
+  description = "ID of the security group"
+  value       = {
+    "base"       = aws_security_group.base.id,
+    "back"       = aws_security_group.back.id,
+    "rds"        = aws_security_group.rds.id,
+    "mongo"      = aws_security_group.mongo.id,
+    "redis"      = aws_security_group.redis.id,
+    "cicd"       = aws_security_group.cicd.id,
+    "kubernetes" = aws_security_group.kubernetes.id
+  }
 }

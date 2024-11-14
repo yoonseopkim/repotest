@@ -30,7 +30,7 @@ variable "delete_protection" {
 
 variable "target_port" {
   description = "Port for target group to map"
-  type        = number
+  type        = map(number)
 }
 
 variable "target_protocol" {
@@ -80,5 +80,25 @@ variable "health_unthreshold" {
 
 variable "frontend_id" {
   description = "ID of frontend instance"
+  type        = string
+}
+
+variable "backend_auth_id" {
+  description = "ID of backend auth module instance"
+  type        = string
+}
+
+variable "ai_id" {
+  description = "ID of ai instance"
+  type        = string
+}
+
+variable "mongo_id" {
+  description = "ID of MongoDB instance"
+  type        = string
+}
+
+variable "redis_id" {
+  description = "ID of Redis instance"
   type        = string
 }

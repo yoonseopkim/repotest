@@ -18,6 +18,11 @@ variable "private_subnet_cidrs" {
   type        = list(string)
 }
 
+variable "db_subnet_cidrs" {
+  description = "CIDR blocks for the database subnets"
+  type        = list(string)
+}
+
 variable "availability_zones" {
   description = "Available zones for subnet"
   type        = list(string)
@@ -31,25 +36,4 @@ variable "any_ip" {
 variable "instance_names" {
   description = "EC2 instance name"
   type        = list(string)
-}
-
-// Non-shared 변수
-variable "vpc_id" {
-  description = "ID of the VPC"
-  type        = string
-}
-
-variable "igw_id" {
-  description = "ID of the internet gateway"
-  type        = string
-}
-
-variable "nat_id" {
-  description = "ID of the nat gateway"
-  type        = string
-}
-
-variable "public_route_table_id" {
-  description = "ID of public route table id"
-  type        = string
 }

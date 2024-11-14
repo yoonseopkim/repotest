@@ -3,7 +3,6 @@ locals {
 }
 
 resource "aws_vpc" "gitfolio" {
-  count                = local.shared ? 1 : 0
   cidr_block           = var.vpc_cidr
   enable_dns_hostnames = true
   
@@ -13,20 +12,19 @@ resource "aws_vpc" "gitfolio" {
 }
 
 resource "aws_subnet" "public" {
-  count             = local.shared ? 0 : length(var.public_subnet_cidrs)
-  vpc_id            = var.vpc_id
+  count             = length(var.public_subnet_cidrs)
+  vpc_id            = aws_vpc.gitfolio.id
   cidr_block        = var.public_subnet_cidrs[count.index]
   availability_zone = var.availability_zones[count.index % 2]
   map_public_ip_on_launch = true
   
   tags = {
-    Name = "Gitfolio ${terraform.workspace} lb subnet${count.index + 1}"
+    Name = "Gitfolio ${ terraform.workspace } lb subnet${ count.index + 1 }"
   }
 }
 
 resource "aws_subnet" "nat" {
-  count             = local.shared ? 1 : 0
-  vpc_id            = aws_vpc.gitfolio[0].id
+  vpc_id            = aws_vpc.gitfolio.id
   cidr_block        = var.nat_subnet_cidr
   availability_zone = var.availability_zones[1]
   
@@ -36,8 +34,8 @@ resource "aws_subnet" "nat" {
 }
 
 resource "aws_subnet" "private" {
-  count             = local.shared ? 0 : length(var.private_subnet_cidrs)
-  vpc_id            = var.vpc_id
+  count             = length(var.private_subnet_cidrs)
+  vpc_id            = aws_vpc.gitfolio.id
   cidr_block        = var.private_subnet_cidrs[count.index]
   availability_zone = var.availability_zones[count.index % 2]
   
@@ -46,8 +44,26 @@ resource "aws_subnet" "private" {
   }
 }
 
+resource "aws_subnet" "rds" {
+  count             = length(var.db_subnet_cidrs)
+  vpc_id            = aws_vpc.gitfolio.id
+  cidr_block        = var.db_subnet_cidrs[count.index]
+  availability_zone = var.availability_zones[count.index]
+  
+  tags = {
+    Name = "Gitfolio RDS subnet${count.index}"
+  }
+}
+
+resource "aws_db_subnet_group" "rds" {
+  subnet_ids = aws_subnet.rds[*].id
+
+  tags = {
+    Name = "Gitfolio RDS subnet group"
+  }
+}
+
 resource "aws_eip" "nat_eip" {
-  count  = local.shared ? 1 : 0
   domain = "vpc"
   
   tags = {
@@ -56,8 +72,7 @@ resource "aws_eip" "nat_eip" {
 }
 
 resource "aws_internet_gateway" "igw" {
-  count  = local.shared ? 1 : 0
-  vpc_id = aws_vpc.gitfolio[0].id
+  vpc_id = aws_vpc.gitfolio.id
 
   tags = {
     Name = "Gitfolio Internet Gateway"
@@ -65,9 +80,8 @@ resource "aws_internet_gateway" "igw" {
 }
 
 resource "aws_nat_gateway" "nat" {
-  count         = local.shared ? 1 : 0
-  allocation_id = aws_eip.nat_eip[0].id
-  subnet_id     = aws_subnet.nat[0].id
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id     = aws_subnet.nat.id
 
   tags = {
     Name = "Gitfolio NAT Gateway"
@@ -77,12 +91,11 @@ resource "aws_nat_gateway" "nat" {
 }
 
 resource "aws_route_table" "public" {
-  count  = local.shared ? 1 : 0
-  vpc_id = aws_vpc.gitfolio[0].id
+  vpc_id = aws_vpc.gitfolio.id
 
   route {
     cidr_block = var.any_ip
-    gateway_id = aws_internet_gateway.igw[0].id
+    gateway_id = aws_internet_gateway.igw.id
   }
 
   tags = {
@@ -91,12 +104,11 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table" "private" {
-  count  = local.shared ? 0 : 1
-  vpc_id = var.vpc_id
+  vpc_id = aws_vpc.gitfolio.id
 
   route {
     cidr_block     = var.any_ip
-    nat_gateway_id = var.nat_id
+    nat_gateway_id = aws_nat_gateway.nat.id
   }
 
   tags = {
@@ -105,19 +117,143 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "public" {
-  count          = local.shared ? 0 : length(aws_subnet.public)
+  count          = length(aws_subnet.public)
   subnet_id      = aws_subnet.public[count.index].id
-  route_table_id = var.public_route_table_id
+  route_table_id = aws_route_table.public.id
 }
 
 resource "aws_route_table_association" "nat" {
- count          = local.shared ? 1 : 0
- subnet_id      = aws_subnet.nat[0].id
- route_table_id = aws_route_table.public[0].id
+ subnet_id      = aws_subnet.nat.id
+ route_table_id = aws_route_table.public.id
 }
 
 resource "aws_route_table_association" "private" {
-  count          = local.shared ? 0 : length(aws_subnet.private)
+  count          = length(aws_subnet.private)
   subnet_id      = aws_subnet.private[count.index].id
-  route_table_id = aws_route_table.private[0].id
+  route_table_id = aws_route_table.private.id
+}
+
+resource "aws_route_table_association" "rds" {
+  count          = length(aws_subnet.rds)
+  subnet_id      = aws_subnet.rds[count.index].id
+  route_table_id = aws_route_table.private.id
+}
+
+resource "aws_security_group" "base" {
+  name = "base_sg"
+  vpc_id = aws_vpc.gitfolio.id
+
+  ingress {
+    description = "HTTP"
+    from_port = 80
+    to_port = 81
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  ingress {
+    description = "HTTPS"
+    from_port = 443
+    to_port = 444
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = [var.any_ip]
+  }
+
+  tags = {
+    Name = "Gitfolio base security group"
+  }
+}
+
+resource "aws_security_group" "back" {
+  name = "back_sg"
+  vpc_id = aws_vpc.gitfolio.id
+
+  tags = {
+    Name = "Gitfolio backend security group"
+  }
+}
+
+resource "aws_security_group" "cicd" {
+  name = "cicd_sg"
+  vpc_id = aws_vpc.gitfolio.id
+
+  tags = {
+    Name = "Gitfolio CI/CD security group"
+  }
+}
+
+resource "aws_security_group" "kubernetes" {
+  name = "kubernetes_sg"
+  vpc_id = aws_vpc.gitfolio.id
+  
+  ingress {
+    description = "Kubernetes API"
+    from_port = 6443
+    to_port = 6443
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  tags = {
+    Name = "Gitfolio kubernetes master node security group"
+  }
+}
+
+resource "aws_security_group" "rds" {
+  name = "rds_sg"
+  vpc_id = aws_vpc.gitfolio.id
+
+  ingress {
+    description = "MySQL"
+    from_port = 3306
+    to_port = 3306
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+    security_groups = [aws_security_group.back.id]
+  }
+
+  tags = {
+    Name = "Gitfolio MySQL security group"
+  }
+}
+
+resource "aws_security_group" "mongo" {
+  name = "mongo_sg"
+  vpc_id = aws_vpc.gitfolio.id
+
+  ingress {
+    description = "MongoDB"
+    from_port = 27017
+    to_port = 27017
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  tags = {
+    Name = "Gitfolio MongoDB security group"
+  }
+}
+
+resource "aws_security_group" "redis" {
+  name = "redis_sg"
+  vpc_id = aws_vpc.gitfolio.id
+
+  ingress {
+    description = "Redis"
+    from_port = 6379
+    to_port = 6379
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  tags = {
+    Name = "Gitfolio Redis security group"
+  }
 }

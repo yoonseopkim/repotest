@@ -13,4 +13,4 @@ xargs -I {} aws ec2 describe-instances \
         IP:PrivateIpAddress
     }" \
     --output json 2>/dev/null | \
-jq -s 'flatten | sort_by(.IP) | [.[] | { Name, InstanceId, Service, Type, Environment }]' > instances.json
+jq -s 'flatten | sort_by(.IP) | [.[] | { Name, InstanceId, IP, Service, Type, Environment }]' > instances.json

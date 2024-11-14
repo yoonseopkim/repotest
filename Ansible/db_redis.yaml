@@ -1,0 +1,31 @@
+- hosts: redis
+  gather_facts: no
+  tasks:
+  - name: Write docker-compose.yaml
+    copy:
+      dest: "{{ ansible_home_dir }}/docker-compose.yaml"
+      content: |
+        services:
+          redis:
+            image: redis:alpine
+            container_name: gitfolio-redis
+            ports:
+              - target: 6379
+                published: 6379
+                protocol: tcp
+            networks:
+              - back
+
+        networks:
+          back:
+            driver: overlay
+            attachable: true
+
+  - name: Initialize Docker Swarm
+    shell: docker swarm init
+    ignore_errors: yes
+    
+  - name: Start docker-compose.yaml
+    shell: docker-compose up -d
+    args:
+      chdir: "{{ ansible_home_dir }}"
