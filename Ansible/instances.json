@@ -8,6 +8,14 @@
     "Environment": "dev"
   },
   {
+    "Name": "Gitfolio BE4",
+    "InstanceId": "i-0dc5ebdec15b5c7ca",
+    "IP": "10.0.105.102",
+    "Service": "back",
+    "Type": "ec2",
+    "Environment": "dev"
+  },
+  {
     "Name": "Gitfolio BE1",
     "InstanceId": "i-0f2195ba3b881d2af",
     "IP": "10.0.105.44",
@@ -19,6 +27,14 @@
     "Name": "Gitfolio BE2",
     "InstanceId": "i-0db0f808c32ea40d0",
     "IP": "10.0.105.75",
+    "Service": "back",
+    "Type": "ec2",
+    "Environment": "dev"
+  },
+  {
+    "Name": "Gitfolio BE3",
+    "InstanceId": "i-04d440aacba6f20c3",
+    "IP": "10.0.105.99",
     "Service": "back",
     "Type": "ec2",
     "Environment": "dev"

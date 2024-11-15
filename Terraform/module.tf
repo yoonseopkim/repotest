@@ -49,7 +49,7 @@ module "gitfolio_front" {
 
 module "gitfolio_back" {
   source               = "./module/node/back"
-  count                = local.shared ? 0 : 2
+  count                = local.shared ? 0 : 4
 
   vpc_id               = data.terraform_remote_state.shared.outputs.vpc_id
   public_subnet_cidrs  = var.public_subnet_cidrs

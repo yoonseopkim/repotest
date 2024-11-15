@@ -10,9 +10,6 @@ services:
       - target: {{ ansible_host_port }}
         published: 443
         protocol: tcp
-      - target: {{ ansible_host_port }}
-        published: 5000
-        protocol: tcp
     networks:
       - {{ ansible_network_namespace }}
       
