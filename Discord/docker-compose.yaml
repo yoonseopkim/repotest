@@ -1,0 +1,16 @@
+services:
+  sentry_bot:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: aida0/sentry_bot:latest
+    container_name: sentry_bot
+    env_file: .env
+    ports:
+      - target: 8000
+        published: 81
+        protocol: tcp
+      - target: 8000
+        published: 444
+        protocol: tcp
