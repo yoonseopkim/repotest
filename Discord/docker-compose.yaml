@@ -4,13 +4,13 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    image: aida0/sentry_bot:latest
-    container_name: sentry_bot
+    image: aida0/sixmen_discord_bot:latest
+    container_name: discord_bot
     env_file: .env
     ports:
-      - target: 8000
+      - target: 80
         published: 81
         protocol: tcp
-      - target: 8000
+      - target: 443
         published: 444
         protocol: tcp

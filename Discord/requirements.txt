@@ -1,9 +1,3 @@
 discord.py
 
-fastapi
-
 pydantic-settings
-
-uvicorn
-
-hypercorn

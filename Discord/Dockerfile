@@ -8,8 +8,8 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-RUN chmod +x main.py
+RUN chmod +x bot.py
 
 EXPOSE 8000
 
-CMD ["python", "main.py"]
+CMD ["python", "bot.py"]
