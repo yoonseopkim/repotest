@@ -1,15 +1,15 @@
 - hosts: front
   gather_facts: no
   tasks:
-  # - name: down containers
-  #   shell: docker-compose down sixmen_discord_bot
-  #   args:
-  #     chdir: "{{ ansible_home_dir }}"
+  - name: down containers
+    shell: docker-compose down discord_bot
+    args:
+      chdir: "{{ ansible_home_dir }}"
 
-  # - name: delete image
-  #   shell: docker rmi aida0/sixmen_discord_bot:latest
-  #   args:
-  #     chdir: "{{ ansible_home_dir }}"
+  - name: delete image
+    shell: docker rmi aida0/gitfolio_discord_bot:latest
+    args:
+      chdir: "{{ ansible_home_dir }}"
 
   - name: up containers
     shell: docker-compose up -d

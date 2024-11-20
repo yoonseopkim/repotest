@@ -1,7 +1,7 @@
 [
   {
     "Name": "Gitfolio Frontend",
-    "InstanceId": "i-0c29bfed98d88f250",
+    "InstanceId": "i-0aadcb4cf5bacafd0",
     "IP": "10.0.104.33",
     "Service": "front",
     "Type": "ec2",
@@ -9,7 +9,7 @@
   },
   {
     "Name": "Gitfolio BE4",
-    "InstanceId": "i-0dc5ebdec15b5c7ca",
+    "InstanceId": "i-06961669afab64d08",
     "IP": "10.0.105.102",
     "Service": "back",
     "Type": "ec2",
@@ -17,7 +17,7 @@
   },
   {
     "Name": "Gitfolio BE1",
-    "InstanceId": "i-0f2195ba3b881d2af",
+    "InstanceId": "i-06ccefcd89ab6d4ca",
     "IP": "10.0.105.44",
     "Service": "back",
     "Type": "ec2",
@@ -25,7 +25,7 @@
   },
   {
     "Name": "Gitfolio BE2",
-    "InstanceId": "i-0db0f808c32ea40d0",
+    "InstanceId": "i-0c25eeab860387c49",
     "IP": "10.0.105.75",
     "Service": "back",
     "Type": "ec2",
@@ -33,7 +33,7 @@
   },
   {
     "Name": "Gitfolio BE3",
-    "InstanceId": "i-04d440aacba6f20c3",
+    "InstanceId": "i-074593dd6105e9233",
     "IP": "10.0.105.99",
     "Service": "back",
     "Type": "ec2",
@@ -41,7 +41,7 @@
   },
   {
     "Name": "Gitfolio AI",
-    "InstanceId": "i-067965bebe6ce9e67",
+    "InstanceId": "i-00093f33116b7e7ff",
     "IP": "10.0.106.88",
     "Service": "ai",
     "Type": "ec2",
@@ -49,7 +49,7 @@
   },
   {
     "Name": "Gitfolio MongoDB",
-    "InstanceId": "i-09c36e4562af3d5e4",
+    "InstanceId": "i-0b637c020e2449007",
     "IP": "10.0.109.14",
     "Service": "mongo",
     "Type": "db",
@@ -57,7 +57,7 @@
   },
   {
     "Name": "Gitfolio Redis",
-    "InstanceId": "i-0d55d4e45dd15273b",
+    "InstanceId": "i-084ae2cad438cf848",
     "IP": "10.0.110.38",
     "Service": "redis",
     "Type": "db",

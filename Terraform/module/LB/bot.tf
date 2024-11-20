@@ -15,7 +15,7 @@ resource "aws_lb_listener_rule" "bot_routing" {
 
   condition {
     path_pattern {
-      values = ["/webhook/sentry-bot", "/webhook/sentry-bot/*"]
+      values = ["/webhook/sentry", "/health", "/health/detailed"]
     }
   }
 
@@ -26,7 +26,7 @@ resource "aws_lb_listener_rule" "bot_routing" {
 
 resource "aws_lb_target_group" "alb_bot" {
   name                  = "gitfolio-bot-tg"
-  port                  = var.target_port["http"] + 1      // LB가 타겟으로 트래픽을 전달하는 포트(ALB->target(instance))
+  port                  = var.target_port["fastapi"]      // LB가 타겟으로 트래픽을 전달하는 포트(ALB->target(instance))
   protocol              = var.target_protocol
   vpc_id                = var.vpc_id
   
@@ -35,7 +35,7 @@ resource "aws_lb_target_group" "alb_bot" {
     healthy_threshold   = var.health_threshold
     interval            = var.health_interval
     matcher             = var.health_matcher
-    path                = format("%swebhook/sentry-bot", var.health_path)
+    path                = format("%shealth/detailed", var.health_path)
     port                = var.health_port
     protocol            = var.health_protocol
     timeout             = var.health_timeout
