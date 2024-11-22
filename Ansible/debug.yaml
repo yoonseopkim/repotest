@@ -1,4 +1,4 @@
-- hosts: dev
+- hosts: ec2
   tasks:
   - name: Install environment
     dnf:
@@ -24,7 +24,7 @@
       mode: '0755'
       force: yes
 
-  - name: Install docker-compose
+  - name: Add docker-compose execution permission
     shell: chmod +x /usr/local/bin/docker-compose
   
   - name: Restart Docker

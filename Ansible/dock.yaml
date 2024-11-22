@@ -1,6 +1,21 @@
-- hosts: all
+- hosts: front
   gather_facts: no
   tasks:
+  - name: down containers
+    shell: docker-compose down -v --rmi all
+    args:
+      chdir: "{{ ansible_home_dir }}"
+
+  - name: pull containers
+    shell: docker-compose pull
+    args:
+      chdir: "{{ ansible_home_dir }}"
+
+  - name: up containers
+    shell: docker-compose up -d
+    args:
+      chdir: "{{ ansible_home_dir }}"
+      
   - name: Execute docker ps using shell
     shell: docker ps -a
     register: docker_ps_output

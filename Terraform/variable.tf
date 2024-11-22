@@ -19,6 +19,11 @@ variable "private_subnet_cidrs" {
   type        = list(string)
 }
 
+variable "nosql_private_ips" {
+  description = "Private IPs for NoSQL subnets"
+  type        = map(string)
+}
+
 variable "elastic_ip_names" {
   description = "Elastic IPs for public subnets"
   type        = map(string)
@@ -55,12 +60,61 @@ variable "private_ips" {
   type        = map(string)
 }
 
-variable "module_indexes" {
-  description = "Index of backend modules"
-  type        = list(string)
+variable "iam_instance_profile" {
+  description = "IAM instance profile"
+  type        = string
 }
 
 // 데이터베이스 변수
+variable "db_subnet_cidrs" {
+  description = "CIDR blocks for the database subnets"
+  type        = list(string)
+}
+
+variable identifier {
+  description = "RDS instance name"
+  type        = string
+}
+
+variable "engine" {
+  description = "Database engine"
+  type        = string
+}
+
+variable "engine_version" {
+  description = "Database engine version"
+  type        = string
+}
+
+variable "instance_class" {
+  description = "Database instance type"
+  type        = string
+}
+
+variable "allocated_storage" {
+  description = "Database allocated storage"
+  type        = number
+}
+
+variable "storage_type" {
+  description = "Database storage type"
+  type        = string
+}
+
+variable "db_name" {
+  description = "Database name"
+  type        = string
+}
+
+variable "db_username" {
+  description = "Database username"
+  type        = string
+}
+
+variable "db_password" {
+  description = "Database password"
+  type        = string
+}
 
 // 로드 밸런서 변수
 variable "route53_domain" {
@@ -80,7 +134,7 @@ variable "delete_protection" {
 
 variable "target_port" {
   description = "Port for target group to map"
-  type        = number
+  type        = map(number)
 }
 
 variable "target_protocol" {

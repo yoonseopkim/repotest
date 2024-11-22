@@ -15,16 +15,16 @@ RUN npm ci && \
 # 소스 코드 복사
 COPY . .
 
-# Next.js 빌드
-RUN CI=false npm run build
+# Next.js 빌드 (경고무시 옵션 추가)
+RUN npm run build
 
 # 프로덕션 이미지 생성
 FROM base AS runner
 WORKDIR /app
 
 # 환경변수 설정
-ENV NODE_ENV=production \
-    NEXT_TELEMETRY_DISABLED=1 \
+ENV NODE_ENV production \
+    NEXT_TELEMETRY_DISABLED 1 \
     PORT=3000 \
     HOST=0.0.0.0
 
@@ -34,10 +34,15 @@ RUN addgroup -S -g 1001 nodejs && \
     chown -R nextjs:nodejs /app
 
 # 빌드 파일 복사
-COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+
+COPY --from=builder /app/package*.json ./
+COPY .env ./
+
+RUN npm ci --only=production && \
+    npm cache clean --force
 
 # 사용자 전환
 USER nextjs
