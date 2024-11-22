@@ -1,0 +1,11 @@
+# k8s/auth/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-config
+data:
+  REDIRECT_ONBOARDING_URL: "https://www.gitfolio.site/onboarding"
+  REDIRECT_MAIN_URL: "https://www.gitfolio.site/community"
+  AUTH_REDIS_HOST: "redis-service"
+  AUTH_REDIS_PORT: "6379"
+---
