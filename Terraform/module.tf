@@ -181,3 +181,17 @@ module "gitfolio_route53" {
 #   policy_countType = var.policy_countType
 #   policy_countNum  = var.policy_countNum
 # }
+
+// ============================================================================================================
+module "gitfolio_eks" {
+  source = "./module/eks"
+
+  cluster_name = "gitfolio-eks"
+  subnet_ids   = module.network.private_subnet_ids
+
+  desired_size = 3
+  max_size     = 5
+  min_size     = 1
+
+  depends_on = [module.network]
+}
