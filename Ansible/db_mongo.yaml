@@ -15,8 +15,13 @@
                 protocol: tcp
             environment:
               MONGO_INITDB_DATABASE: gitfolio_mongo
+            volumes:
+              - mongo_data:/data/mongo
             networks:
               - back
+
+        volumes:
+          mongo_data:
         
         networks:
           back:

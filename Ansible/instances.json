@@ -49,7 +49,7 @@
   },
   {
     "Name": "Gitfolio MongoDB",
-    "InstanceId": "i-0b637c020e2449007",
+    "InstanceId": "i-0a54741a94bcfebe2",
     "IP": "10.0.109.14",
     "Service": "mongo",
     "Type": "db",
@@ -57,7 +57,7 @@
   },
   {
     "Name": "Gitfolio Redis",
-    "InstanceId": "i-084ae2cad438cf848",
+    "InstanceId": "i-0c7cbd42c2a406932",
     "IP": "10.0.110.38",
     "Service": "redis",
     "Type": "db",
