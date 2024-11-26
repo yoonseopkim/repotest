@@ -103,5 +103,8 @@ $RECYCLE.BIN/
 **/group_vars/**
 **/inventory/**
 
+# Environment variables
+.env
+
 # k8s
 secret.yaml

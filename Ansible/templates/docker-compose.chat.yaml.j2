@@ -13,20 +13,6 @@ services:
     networks:
       - {{ ansible_network_namespace }}
       
-  {{ ansible_host_namespace2 }}:
-    platform: linux/amd64
-    image: aida0/gitfolio_{{ ansible_host_namespace2 }}:test
-    container_name: gitfolio_{{ ansible_host_namespace2 }}
-    ports:
-      - target: {{ ansible_host_port }}
-        published: 81
-        protocol: tcp
-      - target: {{ ansible_host_port }}
-        published: 444
-        protocol: tcp
-    networks:
-      - {{ ansible_network_namespace }}
-      
 networks:
   {{ ansible_network_namespace }}:
     driver: overlay

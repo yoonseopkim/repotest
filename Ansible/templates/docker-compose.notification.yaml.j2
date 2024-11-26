@@ -15,14 +15,17 @@ services:
       
   {{ ansible_host_namespace2 }}:
     platform: linux/amd64
-    image: aida0/gitfolio_{{ ansible_host_namespace2 }}:test
+    image: apache/kafka:latest
     container_name: gitfolio_{{ ansible_host_namespace2 }}
     ports:
-      - target: {{ ansible_host_port }}
+      - target: {{ ansible_kafka_port }}
         published: 81
         protocol: tcp
-      - target: {{ ansible_host_port }}
+      - target: {{ ansible_kafka_port }}
         published: 444
+        protocol: tcp
+      - target: {{ ansible_kafka_port }}
+        published: {{ ansible_kafka_port }}
         protocol: tcp
     networks:
       - {{ ansible_network_namespace }}

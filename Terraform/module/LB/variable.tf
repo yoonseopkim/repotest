@@ -88,6 +88,16 @@ variable "backend_auth_id" {
   type        = string
 }
 
+variable "backend_resume_id" {
+  description = "ID of backend instance"
+  type        = string
+}
+
+variable "backend_notification_id" {
+  description = "ID of backend instance"
+  type        = string
+}
+
 variable "ai_id" {
   description = "ID of ai instance"
   type        = string
