@@ -44,7 +44,6 @@ module "gitfolio_front" {
   ami_id               = data.terraform_remote_state.shared.outputs.amazon_linux_id
   instance_types       = var.instance_types
   instance_indexes     = var.instance_indexes
-  ssh_keys             = var.ssh_keys
 }
 
 module "gitfolio_back" {
@@ -61,7 +60,6 @@ module "gitfolio_back" {
   ami_id               = data.terraform_remote_state.shared.outputs.amazon_linux_id
   instance_types       = var.instance_types
   instance_indexes     = var.instance_indexes
-  ssh_keys             = var.ssh_keys
 
   node_index           = count.index
 }
@@ -80,7 +78,6 @@ module "gitfolio_ai" {
   ami_id               = data.terraform_remote_state.shared.outputs.amazon_linux_id
   instance_types       = var.instance_types
   instance_indexes     = var.instance_indexes
-  ssh_keys             = var.ssh_keys
 }
 
 // ============================================================================================================
@@ -121,7 +118,6 @@ module "gitfolio_nosql" {
   ami_id               = module.ami[0].amazon_linux_id
   instance_types       = var.instance_types
   instance_indexes     = var.instance_indexes
-  ssh_keys             = var.ssh_keys
 
   node_index           = count.index
 }

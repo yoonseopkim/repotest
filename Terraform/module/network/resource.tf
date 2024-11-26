@@ -159,6 +159,14 @@ resource "aws_security_group" "base" {
     cidr_blocks = [var.any_ip]
   }
 
+  ingress {
+    description = "ICMP"
+    from_port = 8
+    to_port = 0
+    protocol = "icmp"
+    cidr_blocks = [var.any_ip]
+  }
+
   egress {
     from_port = 0
     to_port = 0

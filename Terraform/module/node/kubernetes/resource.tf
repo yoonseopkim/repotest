@@ -1,7 +1,6 @@
 resource "aws_instance" "master" {
   ami           = var.ami_id
   instance_type = var.instance_types["medium"]
-  key_name      = var.ssh_keys["kubernetes"]
   subnet_id     = var.private_subnet_ids[var.instance_indexes["kubernetes"]]
   vpc_security_group_ids = [vvar.security_group_dis["base"], var.security_group_ids["kubernetes"]]
   private_ip = var.private_ips["master"]
@@ -14,7 +13,6 @@ resource "aws_instance" "master" {
 resource "aws_instance" "ingress" {
   ami           = var.ami_id
   instance_type = var.instance_types["low"]
-  key_name      = var.ssh_keys["kubernetes"]
   subnet_id     = var.private_subnet_ids[var.instance_indexes["kubernetes"]]
   vpc_security_group_ids = [var.security_group_ids["kubernetes"]]
   private_ip = var.private_ips["ingress"]

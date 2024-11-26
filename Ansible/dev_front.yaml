@@ -3,7 +3,7 @@
   tasks:
   - name: Write docker-compose.yaml
     template:
-      src: docker-compose.yaml.j2
+      src: docker-compose.front.yaml.j2
       dest: "{{ ansible_home_dir }}/docker-compose.yaml"
 
   - name: Initialize Docker Swarm

@@ -1,7 +1,6 @@
 resource "aws_instance" "ai" {
   ami                    = var.ami_id
   instance_type          = var.instance_types["micro"]
-  key_name               = var.ssh_keys["ai"]
   subnet_id              = var.private_subnet_ids[var.instance_indexes["ai"]]
   vpc_security_group_ids = [var.security_group_ids["base"]]
   private_ip             = var.private_ips["ai"]
