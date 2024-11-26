@@ -182,18 +182,42 @@ module "gitfolio_route53" {
 #   policy_tagStatus = var.policy_tagStatus
 #   policy_countType = var.policy_countType
 #   policy_countNum  = var.policy_countNum
-# }
+#
 
 // ============================================================================================================
+# module "kubernetes" {
+#   source = "./module/node/kubernetes"
+#
+#   instance_types       = var.instance_types
+#   ssh_keys            = var.ssh_keys
+#   private_subnet_ids   = module.gitfolio_network[0].private_subnet_ids
+#   instance_indexes    = var.instance_indexes
+#   security_group_ids  = var.security_group_ids
+#   private_ips         = var.private_ips
+#   private_subnet_cidrs = var.private_subnet_cidrs
+#   worker_count        = 2  # 또는 변수로 설정
+# }
+
+# 수정후
+
 module "kubernetes" {
-  source = "./module/node/kubernetes"
+  source               = "./module/node/kubernetes"
+  count                = local.shared ? 1 : 0    # shared workspace에서만 생성
+
+  vpc_id               = module.gitfolio_network[0].vpc_id
+  ami_id               = module.ami[0].amazon_linux_id
+  public_subnet_cidrs  = var.public_subnet_cidrs
+  iam_instance_profile = var.iam_instance_profile
 
   instance_types       = var.instance_types
   ssh_keys            = var.ssh_keys
-  private_subnet_ids  = module.network.private_subnet_ids
+  private_subnet_ids  = module.gitfolio_network[0].private_subnet_ids
   instance_indexes    = var.instance_indexes
-  security_group_ids  = var.security_group_ids
+  security_group_ids  = module.gitfolio_network[0].security_group_ids
   private_ips         = var.private_ips
   private_subnet_cidrs = var.private_subnet_cidrs
-  worker_count        = 2  # 또는 변수로 설정
+  worker_count        = 2
+
 }
+
+

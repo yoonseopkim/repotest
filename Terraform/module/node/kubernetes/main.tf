@@ -8,6 +8,9 @@ resource "aws_instance" "master" {
   
   tags = {
     Name = "Gitfolio Kubernetes master node"
+    Environment = terraform.workspace
+    Service = "master"        # aws_ec2.yaml에서 이 태그로 그룹핑
+    Type = "kubernetes"
   }
 }
 
@@ -21,5 +24,8 @@ resource "aws_instance" "ingress" {
   
   tags = {
     Name = "Gitfolio Kubernetes ingress node"
+    Environment = terraform.workspace
+    Service = "worker"        # aws_ec2.yaml에서 이 태그로 그룹핑
+    Type = "kubernetes"
   }
 }

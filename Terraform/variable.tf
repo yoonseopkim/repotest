@@ -207,3 +207,12 @@ variable "policy_countNum" {
   description  = "Count number of ECR lifecycle policy"
   type         = number
 }
+
+variable "kubernetes_config" {
+  type = object({
+    worker_count       = number
+    pod_network_cidr   = string
+    service_cidr       = string
+  })
+  description = "Kubernetes configuration settings"
+}
