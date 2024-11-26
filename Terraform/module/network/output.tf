@@ -43,6 +43,7 @@ output "security_group_ids" {
   value       = {
     "base"       = aws_security_group.base.id,
     "back"       = aws_security_group.back.id,
+    "discord_bot"= aws_security_group.discord_bot.id,
     "rds"        = aws_security_group.rds.id,
     "mongo"      = aws_security_group.mongo.id,
     "redis"      = aws_security_group.redis.id,

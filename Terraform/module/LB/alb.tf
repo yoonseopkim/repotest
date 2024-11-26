@@ -166,26 +166,3 @@ resource "aws_lb_target_group_attachment" "frontend" {
   target_group_arn = aws_lb_target_group.alb.arn
   target_id        = var.frontend_id
 }
-
-resource "aws_lb_listener" "api" {
-  load_balancer_arn = aws_lb.alb.arn
-  port              = 5000                             // 클라이언트가 LB에 접근하는 포트(클라이언트->LB)
-  protocol          = "HTTPS"
-
-  ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
-  certificate_arn   = data.aws_acm_certificate.gitfolio_issued.arn
-
-  default_action {
-    type           = "fixed-response"
-
-    fixed_response {
-      content_type = "text/plain"
-      message_body = "Invalid host"
-      status_code  = "404"
-    }
-  }
-  
-  tags = {
-    Name = "Gitfolio api listner"
-  }
-}
