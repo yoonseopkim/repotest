@@ -181,3 +181,17 @@ module "gitfolio_route53" {
 #   policy_countType = var.policy_countType
 #   policy_countNum  = var.policy_countNum
 # }
+
+// ============================================================================================================
+module "kubernetes" {
+  source = "./module/node/kubernetes"
+
+  instance_types       = var.instance_types
+  ssh_keys            = var.ssh_keys
+  private_subnet_ids  = module.network.private_subnet_ids
+  instance_indexes    = var.instance_indexes
+  security_group_ids  = var.security_group_ids
+  private_ips         = var.private_ips
+  private_subnet_cidrs = var.private_subnet_cidrs
+  worker_count        = 2  # 또는 변수로 설정
+}
