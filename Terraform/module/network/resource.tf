@@ -175,6 +175,30 @@ resource "aws_security_group" "back" {
   name = "back_sg"
   vpc_id = aws_vpc.gitfolio.id
 
+  ingress {
+    description = "kafka1"
+    from_port = 9092
+    to_port = 9092
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  ingress {
+    description = "kafka2"
+    from_port = 29092
+    to_port = 29092
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  ingress {
+    description = "zookeeper"
+    from_port = 2181
+    to_port = 2181
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
   tags = {
     Name = "Gitfolio backend security group"
   }
