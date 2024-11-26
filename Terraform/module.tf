@@ -173,13 +173,13 @@ module "gitfolio_route53" {
 // ============================================================================================================
 
 // Container
-# module "gitfolio_ecr" {
-#   source           = "./module/ECR"
-#   count            = local.shared ? 0 : 1
+module "gitfolio_ecr" {
+  source           = "./module/ECR"
+  count            = local.shared ? 0 : 1
   
-#   ecr_repo_name    = var.ecr_repo_name
-#   tag_mutability   = var.tag_mutability
-#   policy_tagStatus = var.policy_tagStatus
-#   policy_countType = var.policy_countType
-#   policy_countNum  = var.policy_countNum
-# }
+  ecr_repo_name    = var.ecr_repo_name
+  tag_mutability   = var.tag_mutability
+  policy_tagStatus = var.policy_tagStatus
+  policy_countType = var.policy_countType
+  policy_countNum  = var.policy_countNum
+}
