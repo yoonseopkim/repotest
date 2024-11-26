@@ -257,3 +257,20 @@ resource "aws_security_group" "redis" {
     Name = "Gitfolio Redis security group"
   }
 }
+
+resource "aws_security_group" "discord_bot" {
+  name = "discord_bot_sg"
+  vpc_id = aws_vpc.gitfolio.id
+
+  ingress {
+    description = "Sentry webhook"
+    from_port = 8000
+    to_port = 8000
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  tags = {
+    Name = "Gitfolio backend security group"
+  }
+}

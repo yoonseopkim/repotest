@@ -47,3 +47,16 @@ variable "iam_instance_profile" {
   description = "IAM instance profile"
   type        = string
 }
+
+# 쿠버관련 변수추가
+
+variable "private_subnet_cidrs" {
+  description = "CIDR blocks of the private subnets"
+  type        = list(string)
+}
+
+variable "worker_count" {
+  description = "Number of Kubernetes worker nodes"
+  type        = number
+  default     = 2
+}
