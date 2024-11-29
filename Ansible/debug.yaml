@@ -1,4 +1,5 @@
-- hosts: ec2
+- hosts: all
+  gather_facts: yes
   tasks:
   - name: Install environment
     dnf:

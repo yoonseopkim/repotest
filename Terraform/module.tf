@@ -34,8 +34,6 @@ module "gitfolio_front" {
   source               = "./module/node/front"
   count                = local.shared ? 0 : 1
 
-  vpc_id               = data.terraform_remote_state.shared.outputs.vpc_id
-  public_subnet_cidrs  = var.public_subnet_cidrs
   private_subnet_ids   = data.terraform_remote_state.shared.outputs.private_subnet_ids
   security_group_ids   = data.terraform_remote_state.shared.outputs.security_group_ids
   private_ips          = var.private_ips
@@ -50,8 +48,6 @@ module "gitfolio_back" {
   source               = "./module/node/back"
   count                = local.shared ? 0 : 4
 
-  vpc_id               = data.terraform_remote_state.shared.outputs.vpc_id
-  public_subnet_cidrs  = var.public_subnet_cidrs
   private_subnet_ids   = data.terraform_remote_state.shared.outputs.private_subnet_ids
   security_group_ids   = data.terraform_remote_state.shared.outputs.security_group_ids
   private_ips          = var.private_ips
@@ -68,8 +64,8 @@ module "gitfolio_ai" {
   source               = "./module/node/ai"
   count                = local.shared ? 0 : 1
 
-  vpc_id               = data.terraform_remote_state.shared.outputs.vpc_id
-  public_subnet_cidrs  = var.public_subnet_cidrs
+  private_subnet_ids   = data.terraform_remote_state.shared.outputs.private_subnet_ids
+  security_group_ids   = data.terraform_remote_state.shared.outputs.security_group_ids
 module "gitfolio_k8s" {
   source               = "./module/node/kubernetes"
   count                = local.shared ? 0 : 0
