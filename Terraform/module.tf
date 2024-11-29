@@ -66,6 +66,14 @@ module "gitfolio_ai" {
 
   private_subnet_ids   = data.terraform_remote_state.shared.outputs.private_subnet_ids
   security_group_ids   = data.terraform_remote_state.shared.outputs.security_group_ids
+  private_ips          = var.private_ips
+  iam_instance_profile = var.iam_instance_profile
+
+  ami_id               = data.terraform_remote_state.shared.outputs.amazon_linux_id
+  instance_types       = var.instance_types
+  instance_indexes     = var.instance_indexes
+}
+
 module "gitfolio_k8s" {
   source               = "./module/node/kubernetes"
   count                = local.shared ? 0 : 0
@@ -139,6 +147,7 @@ module "gitfolio_alb" {
   redis_id             = data.terraform_remote_state.shared.outputs.nosql_id[1]
   backend_resume_id    = module.gitfolio_back[1].instance_id
   backend_notification_id = module.gitfolio_back[2].instance_id
+  k8s_id               = null#module.gitfolio_k8s[0].instance_id
 
   route53_domain       = var.route53_domain
   lb_type              = var.lb_type

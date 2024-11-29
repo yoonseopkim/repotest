@@ -112,3 +112,8 @@ variable "redis_id" {
   description = "ID of Redis instance"
   type        = string
 }
+
+variable "k8s_id" {
+  description = "ID of k8s master instance"
+  type        = string
+}
