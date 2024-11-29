@@ -1,15 +1,35 @@
-# backend/deployments/auth-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-deployment
+  name: member-deployment
+  namespace: default
+  labels:
+    app: member
 spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: member
   template:
+    metadata:
+      labels:
+        app: member
     spec:
       containers:
-        - name: auth
+        - name: member
+          image: aida0/gitfolio_member:test
+          ports:
+            - containerPort: 8080
+            - containerPort: 9090
           envFrom:
             - configMapRef:
-                name: backend-configmap    # 변경된 이름으로 참조
+                name: backend-configmap
             - secretRef:
-                name: backend-secret      # 변경된 이름으로 참조
+                name: backend-secret
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "300m"
+            limits:
+              memory: "1Gi"
+              cpu: "600m"

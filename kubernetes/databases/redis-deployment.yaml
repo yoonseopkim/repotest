@@ -1,7 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: redis
+  name: redis-deployment
+  namespace: default
   labels:
     app: redis
 spec:
@@ -20,15 +21,22 @@ spec:
           ports:
             - containerPort: 6379
           volumeMounts:
-            - name: redis-data
+            - name: redis-pvc
               mountPath: /data
-          env:
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: redis-secret
-                  key: redis-password
+          # ConfigMap과 Secret에서 환경변수 가져오기
+          envFrom:
+            - configMapRef:
+                name: backend-configmap
+            - secretRef:
+                name: backend-secret
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
       volumes:
-        - name: redis-data
+        - name: redis-pvc
           persistentVolumeClaim:
             claimName: redis-pvc

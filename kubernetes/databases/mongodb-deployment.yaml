@@ -1,7 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongodb
+  name: mongodb-deployment
+  namespace: default
   labels:
     app: mongodb
 spec:
@@ -20,20 +21,22 @@ spec:
           ports:
             - containerPort: 27017
           volumeMounts:
-            - name: mongodb-data
+            - name: mongodb-pvc
               mountPath: /data/db
-          env:
-            - name: MONGO_INITDB_ROOT_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: mongodb-secret
-                  key: username
-            - name: MONGO_INITDB_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mongodb-secret
-                  key: password
+          # ConfigMap과 Secret에서 환경변수 가져오기
+          envFrom:
+            - configMapRef:
+                name: backend-configmap
+            - secretRef:
+                name: backend-secret
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
       volumes:
-        - name: mongodb-data
+        - name: mongodb-pvc
           persistentVolumeClaim:
             claimName: mongodb-pvc
