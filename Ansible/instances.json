@@ -1,19 +1,35 @@
 [
   {
+    "Name": "Gitfolio Kubernetes master node",
+    "InstanceId": "i-0088b1941e928cdfc",
+    "IP": "10.0.103.6",
+    "Service": "master",
+    "Type": "kubernetes",
+    "Environment": "dev"
+  },
+  {
+    "Name": "Gitfolio Kubernetes worker node0",
+    "InstanceId": "i-08220080a0bb85828",
+    "IP": "10.0.103.8",
+    "Service": "worker",
+    "Type": "kubernetes",
+    "Environment": "dev"
+  },
+  {
+    "Name": "Gitfolio Kubernetes worker node1",
+    "InstanceId": "i-04d0c6898b2f9d733",
+    "IP": "10.0.103.9",
+    "Service": "worker",
+    "Type": "kubernetes",
+    "Environment": "dev"
+  },
+  {
     "Name": "Gitfolio Frontend",
     "InstanceId": "i-033b4b7be6dbbe75b",
     "IP": "10.0.104.33",
     "Service": "front",
     "Type": "ec2",
     "Environment": "dev"
-  },
-  {
-    "Name": "Gitfolio Frontend",
-    "InstanceId": "i-0959e0f2ee4c10a0b",
-    "IP": "10.0.104.34",
-    "Service": "front",
-    "Type": "ec2",
-    "Environment": "dev-seop"
   },
   {
     "Name": "Gitfolio BE4",

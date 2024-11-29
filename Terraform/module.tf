@@ -70,6 +70,10 @@ module "gitfolio_ai" {
 
   vpc_id               = data.terraform_remote_state.shared.outputs.vpc_id
   public_subnet_cidrs  = var.public_subnet_cidrs
+module "gitfolio_k8s" {
+  source               = "./module/node/kubernetes"
+  count                = local.shared ? 0 : 0
+
   private_subnet_ids   = data.terraform_remote_state.shared.outputs.private_subnet_ids
   security_group_ids   = data.terraform_remote_state.shared.outputs.security_group_ids
   private_ips          = var.private_ips

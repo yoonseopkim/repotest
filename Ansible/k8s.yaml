@@ -10,17 +10,16 @@
       dnf:
         name:
           - dnf-plugin-versionlock
-          - curl
-          - iproute-tc
           - ca-certificates
           - pip
           - containerd
         state: present
+      changed_when: false
 
-    # - name: Disable swap
-    #   shell: |
-    #     swapoff -a
-    #   changed_when: false
+    - name: Disable swap
+      shell: |
+        swapoff -a
+      changed_when: false
 
     - name: Configure Kubernetes prerequisites
       copy:
@@ -62,11 +61,10 @@
         containerd config default | tee /etc/containerd/config.toml > /dev/null
 
     - name: Replace SystemdCgroup with SystemCgroup
-      lineinfile:
+      replace:
         path: /etc/containerd/config.toml
-        regexp: '^SystemdCgroup = false'
-        line: 'SystemCgroup = true'
-        state: present
+        regexp: 'SystemdCgroup = false'
+        replace: 'SystemdCgroup = true'
 
     - name: Restart containerd
       systemd:
@@ -75,25 +73,43 @@
         enabled: yes
         daemon_reload: yes
 
-    - name: Get containerd status 
-      shell: systemctl status containerd
-      register: countainerd_status
+    # - name: Get containerd status 
+    #   shell: systemctl status containerd
+    #   register: countainerd_status
 
-    - name: Display containerd status
-      debug:
-        var: countainerd_status.stdout_lines
+    # - name: Display containerd status
+    #   debug:
+    #     var: countainerd_status.stdout_lines
 
     - name: Add Kubernetes repo
       yum_repository:
         name: kubernetes
-        description: Kubernetes repo
-        baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-\$basearch
-        gpgkey: 
-          - https://packages.cloud.google.com/yum/doc/yum-key.gpg
-          - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+        description: Kubernetes
+        baseurl: "{{ ansible_kubernetes_repo_url }}"
+        gpgkey: "{{ ansible_kubernetes_repo_url }}/repodata/repomd.xml.key"
         gpgcheck: yes
         enabled: yes
-        exclude: kubelet kubeadm kubectl
+        exclude: 
+          - kubelet
+          - kubeadm
+          - kubectl
+          - cri-tools
+          - kubernetes-cni
+      changed_when: false
+
+    - name: Set SELinux mode to permissive
+      selinux:
+        policy: targeted
+        state: permissive
+      changed_when: false
+
+    - name: Replace SELinux mode to permissive
+      lineinfile:
+        path: /etc/selinux/config
+        regexp: '^SELINUX=enforcing'
+        line: 'SELINUX=permissive'
+        state: present
+      changed_when: false
 
     - name: Update system
       dnf:
@@ -103,11 +119,12 @@
     - name: Install Kubernetes packages
       dnf:
         name:
-          - kubelet-{{ ansible_kubernetes_version }}-0
-          - kubeadm-{{ ansible_kubernetes_version }}-0
-          - kubectl-{{ ansible_kubernetes_version }}-0
+          - kubelet
+          - kubeadm
+          - kubectl
         state: present
         disable_excludes: kubernetes
+      changed_when: false
 
     - name: Hold Kubernetes packages version
       community.general.dnf_versionlock:
@@ -116,6 +133,7 @@
           - kubeadm
           - kubectl
         state: present
+      changed_when: false
         
     - name: Start and enable kubelet
       systemd:
@@ -123,14 +141,3 @@
         state: started
         enabled: yes
         daemon_reload: yes
-
-    - name: Get Kubernetes packages status
-      shell: |
-        kuberlet --version
-        kubeadm version
-        kubectl version --output=yaml
-      register: kube_packages_status
-
-    - name: Display containerd status
-      debug:
-        var: kube_packages_status.stdout_lines
