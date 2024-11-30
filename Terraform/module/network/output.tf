@@ -48,6 +48,7 @@ output "security_group_ids" {
     "mongo"      = aws_security_group.mongo.id,
     "redis"      = aws_security_group.redis.id,
     "cicd"       = aws_security_group.cicd.id,
-    "kubernetes" = aws_security_group.kubernetes.id
+    "k8s_master" = aws_security_group.k8s_master.id
+    "k8s_worker" = aws_security_group.k8s_worker.id
   }
 }

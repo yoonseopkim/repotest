@@ -1,5 +1,4 @@
 - hosts: redis
-  gather_facts: no
   tasks:
   - name: Write docker-compose.yaml
     copy:
@@ -13,8 +12,13 @@
               - target: 6379
                 published: 6379
                 protocol: tcp
+            volumes:
+              - redis_data:/data/redis
             networks:
               - back
+
+        volumes:
+          redis_data:
 
         networks:
           back:

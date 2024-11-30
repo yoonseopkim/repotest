@@ -12,23 +12,49 @@ services:
         protocol: tcp
     networks:
       - {{ ansible_network_namespace }}
+
+  {{ ansible_host_namespace3 }}:
+    platform: linux/amd64
+    image: zookeeper:3.6
+    container_name: gitfolio_{{ ansible_host_namespace3 }}
+    ports:
+      - target: {{ ansible_zookeeper_port }}
+        published: {{ ansible_zookeeper_port }}
+        protocol: tcp
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper/data
+    networks:
+      - {{ ansible_network_namespace }}
       
   {{ ansible_host_namespace2 }}:
     platform: linux/amd64
-    image: apache/kafka:latest
+    image: confluentinc/cp-kafka:7.4.0
     container_name: gitfolio_{{ ansible_host_namespace2 }}
     ports:
-      - target: {{ ansible_kafka_port }}
-        published: 81
+      - target: {{ ansible_kafka_port1 }}
+        published: {{ ansible_kafka_port1 }}
         protocol: tcp
-      - target: {{ ansible_kafka_port }}
-        published: 444
+      - target: {{ ansible_kafka_port2 }}
+        published: {{ ansible_kafka_port2 }}
         protocol: tcp
-      - target: {{ ansible_kafka_port }}
-        published: {{ ansible_kafka_port }}
-        protocol: tcp
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_LISTENERS: LISTENER_DOCKER://0.0.0.0:{{ ansible_kafka_port2 }},LISTENER_EXTERNAL://0.0.0.0:{{ ansible_kafka_port1 }}
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER://localhost:{{ ansible_kafka_port2 }},LISTENER_EXTERNAL://{{ ansible_kafka_external_host }}:{{ ansible_kafka_port1 }}
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER:PLAINTEXT,LISTENER_EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER
+      KAFKA_ZOOKEEPER_CONNECT: {{ ansible_host_namespace3 }}:{{ ansible_zookeeper_port }}
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - {{ ansible_host_namespace3 }}
+    volumes:
+      - kafka_data:/var/lib/kafka/data
     networks:
       - {{ ansible_network_namespace }}
+
+volumes:
+  zookeeper_data:
+  kafka_data:
       
 networks:
   {{ ansible_network_namespace }}:

@@ -159,6 +159,14 @@ resource "aws_security_group" "base" {
     cidr_blocks = [var.any_ip]
   }
 
+  ingress {
+    description = "ICMP"
+    from_port = 8
+    to_port = 0
+    protocol = "icmp"
+    cidr_blocks = [var.any_ip]
+  }
+
   egress {
     from_port = 0
     to_port = 0
@@ -174,6 +182,30 @@ resource "aws_security_group" "base" {
 resource "aws_security_group" "back" {
   name = "back_sg"
   vpc_id = aws_vpc.gitfolio.id
+
+  ingress {
+    description = "kafka1"
+    from_port = 9092
+    to_port = 9092
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  ingress {
+    description = "kafka2"
+    from_port = 29092
+    to_port = 29092
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  ingress {
+    description = "zookeeper"
+    from_port = 2181
+    to_port = 2181
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
 
   tags = {
     Name = "Gitfolio backend security group"
@@ -206,8 +238,8 @@ resource "aws_security_group" "cicd" {
   }
 }
 
-resource "aws_security_group" "kubernetes" {
-  name = "kubernetes_sg"
+resource "aws_security_group" "k8s_master" {
+  name = "k8s_master_sg"
   vpc_id = aws_vpc.gitfolio.id
   
   ingress {
@@ -218,8 +250,72 @@ resource "aws_security_group" "kubernetes" {
     cidr_blocks = [var.any_ip]
   }
 
+  ingress {
+    description = "etcd API"
+    from_port = 2379
+    to_port = 2380
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  ingress {
+    description = "Kubelet API"
+    from_port = 10250
+    to_port = 10250
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  ingress {
+    description = "kube-scheduler"
+    from_port = 10259
+    to_port = 10259
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  ingress {
+    description = "kube-controller-manager"
+    from_port = 10257
+    to_port = 10257
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  ingress {
+    description = "kubernetes-dashboard"
+    from_port = 8001
+    to_port = 8001
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
   tags = {
-    Name = "Gitfolio kubernetes master node security group"
+    Name = "Gitfolio k8s master node security group"
+  }
+}
+
+resource "aws_security_group" "k8s_worker" {
+  name = "k8s_worker_sg"
+  vpc_id = aws_vpc.gitfolio.id
+  ingress {
+    description = "Kubelet API"
+    from_port = 10250
+    to_port = 10250
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  ingress {
+    description = "NodePort"
+    from_port = 30000
+    to_port = 32767
+    protocol = "tcp"
+    cidr_blocks = [var.any_ip]
+  }
+
+  tags = {
+    Name = "Gitfolio k8s worker node security group"
   }
 }
 
@@ -272,22 +368,5 @@ resource "aws_security_group" "redis" {
 
   tags = {
     Name = "Gitfolio Redis security group"
-  }
-}
-
-resource "aws_security_group" "discord_bot" {
-  name = "discord_bot_sg"
-  vpc_id = aws_vpc.gitfolio.id
-
-  ingress {
-    description = "Sentry webhook"
-    from_port = 8000
-    to_port = 8000
-    protocol = "tcp"
-    cidr_blocks = [var.any_ip]
-  }
-
-  tags = {
-    Name = "Gitfolio backend security group"
   }
 }

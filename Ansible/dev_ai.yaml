@@ -1,5 +1,4 @@
 - hosts: ai
-  gather_facts: no
   tasks:
   - name: Write docker-compose.yaml
     template:

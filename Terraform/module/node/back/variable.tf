@@ -1,13 +1,3 @@
-variable "vpc_id" {
-  description = "ID of the VPC"
-  type        = string
-}
-
-variable "public_subnet_cidrs" {
-  description = "CIDR blocks of the public subnets"
-  type        = list(string)
-}
-
 variable "private_subnet_ids" {
   description = "IDs of the private subnets"
   type        = list(string)
@@ -26,11 +16,6 @@ variable "instance_indexes" {
 variable "ami_id" {
   description = "EC2 AMI ID"
   type        = string
-}
-
-variable "ssh_keys" {
-  description = "EC2 SSH access key names"
-  type        = map(string)
 }
 
 variable "private_ips" {

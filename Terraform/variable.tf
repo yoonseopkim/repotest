@@ -50,11 +50,6 @@ variable "instance_indexes" {
   type        = map(number)
 }
 
-variable "ssh_keys" {
-  description = "EC2 SSH access key names"
-  type        = map(string)
-}
-
 variable "private_ips" {
   description = "Private IPs for subnets"
   type        = map(string)

@@ -1,5 +1,4 @@
 - hosts: front
-  gather_facts: no
   tasks:
   - name: down containers
     shell: docker-compose down discord_bot

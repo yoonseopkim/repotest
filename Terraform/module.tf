@@ -34,8 +34,6 @@ module "gitfolio_front" {
   source               = "./module/node/front"
   count                = local.shared ? 0 : 1
 
-  vpc_id               = data.terraform_remote_state.shared.outputs.vpc_id
-  public_subnet_cidrs  = var.public_subnet_cidrs
   private_subnet_ids   = data.terraform_remote_state.shared.outputs.private_subnet_ids
   security_group_ids   = data.terraform_remote_state.shared.outputs.security_group_ids
   private_ips          = var.private_ips
@@ -44,15 +42,12 @@ module "gitfolio_front" {
   ami_id               = data.terraform_remote_state.shared.outputs.amazon_linux_id
   instance_types       = var.instance_types
   instance_indexes     = var.instance_indexes
-  ssh_keys             = var.ssh_keys
 }
 
 module "gitfolio_back" {
   source               = "./module/node/back"
   count                = local.shared ? 0 : 4
 
-  vpc_id               = data.terraform_remote_state.shared.outputs.vpc_id
-  public_subnet_cidrs  = var.public_subnet_cidrs
   private_subnet_ids   = data.terraform_remote_state.shared.outputs.private_subnet_ids
   security_group_ids   = data.terraform_remote_state.shared.outputs.security_group_ids
   private_ips          = var.private_ips
@@ -61,7 +56,6 @@ module "gitfolio_back" {
   ami_id               = data.terraform_remote_state.shared.outputs.amazon_linux_id
   instance_types       = var.instance_types
   instance_indexes     = var.instance_indexes
-  ssh_keys             = var.ssh_keys
 
   node_index           = count.index
 }
@@ -70,8 +64,6 @@ module "gitfolio_ai" {
   source               = "./module/node/ai"
   count                = local.shared ? 0 : 1
 
-  vpc_id               = data.terraform_remote_state.shared.outputs.vpc_id
-  public_subnet_cidrs  = var.public_subnet_cidrs
   private_subnet_ids   = data.terraform_remote_state.shared.outputs.private_subnet_ids
   security_group_ids   = data.terraform_remote_state.shared.outputs.security_group_ids
   private_ips          = var.private_ips
@@ -80,7 +72,20 @@ module "gitfolio_ai" {
   ami_id               = data.terraform_remote_state.shared.outputs.amazon_linux_id
   instance_types       = var.instance_types
   instance_indexes     = var.instance_indexes
-  ssh_keys             = var.ssh_keys
+}
+
+module "gitfolio_k8s" {
+  source               = "./module/node/kubernetes"
+  count                = local.shared ? 0 : 0
+
+  private_subnet_ids   = data.terraform_remote_state.shared.outputs.private_subnet_ids
+  security_group_ids   = data.terraform_remote_state.shared.outputs.security_group_ids
+  private_ips          = var.private_ips
+  iam_instance_profile = var.iam_instance_profile
+
+  ami_id               = data.terraform_remote_state.shared.outputs.amazon_linux_id
+  instance_types       = var.instance_types
+  instance_indexes     = var.instance_indexes
 }
 
 // ============================================================================================================
@@ -121,7 +126,6 @@ module "gitfolio_nosql" {
   ami_id               = module.ami[0].amazon_linux_id
   instance_types       = var.instance_types
   instance_indexes     = var.instance_indexes
-  ssh_keys             = var.ssh_keys
 
   node_index           = count.index
 }
@@ -143,6 +147,7 @@ module "gitfolio_alb" {
   redis_id             = data.terraform_remote_state.shared.outputs.nosql_id[1]
   backend_resume_id    = module.gitfolio_back[1].instance_id
   backend_notification_id = module.gitfolio_back[2].instance_id
+  k8s_id               = null#module.gitfolio_k8s[0].instance_id
 
   route53_domain       = var.route53_domain
   lb_type              = var.lb_type
@@ -173,51 +178,13 @@ module "gitfolio_route53" {
 // ============================================================================================================
 
 // Container
-# module "gitfolio_ecr" {
-#   source           = "./module/ECR"
-#   count            = local.shared ? 0 : 1
+module "gitfolio_ecr" {
+  source           = "./module/ECR"
+  count            = local.shared ? 0 : 1
   
-#   ecr_repo_name    = var.ecr_repo_name
-#   tag_mutability   = var.tag_mutability
-#   policy_tagStatus = var.policy_tagStatus
-#   policy_countType = var.policy_countType
-#   policy_countNum  = var.policy_countNum
-#
-
-// ============================================================================================================
-# module "kubernetes" {
-#   source = "./module/node/kubernetes"
-#
-#   instance_types       = var.instance_types
-#   ssh_keys            = var.ssh_keys
-#   private_subnet_ids   = module.gitfolio_network[0].private_subnet_ids
-#   instance_indexes    = var.instance_indexes
-#   security_group_ids  = var.security_group_ids
-#   private_ips         = var.private_ips
-#   private_subnet_cidrs = var.private_subnet_cidrs
-#   worker_count        = 2  # 또는 변수로 설정
-# }
-
-# 수정후
-
-module "kubernetes" {
-  source               = "./module/node/kubernetes"
-  count                = local.shared ? 1 : 0    # shared workspace에서만 생성
-
-  vpc_id               = module.gitfolio_network[0].vpc_id
-  ami_id               = module.ami[0].amazon_linux_id
-  public_subnet_cidrs  = var.public_subnet_cidrs
-  iam_instance_profile = var.iam_instance_profile
-
-  instance_types       = var.instance_types
-  ssh_keys            = var.ssh_keys
-  private_subnet_ids  = module.gitfolio_network[0].private_subnet_ids
-  instance_indexes    = var.instance_indexes
-  security_group_ids  = module.gitfolio_network[0].security_group_ids
-  private_ips         = var.private_ips
-  private_subnet_cidrs = var.private_subnet_cidrs
-  worker_count        = 2
-
+  ecr_repo_name    = var.ecr_repo_name
+  tag_mutability   = var.tag_mutability
+  policy_tagStatus = var.policy_tagStatus
+  policy_countType = var.policy_countType
+  policy_countNum  = var.policy_countNum
 }
-
-

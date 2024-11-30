@@ -1,112 +1,79 @@
 - name: Configure Kubernetes master node
   hosts: master
   tasks:
-    - name: Update system
-      dnf:
-        name: '*'
-        state: latest
-  
-    - name: Install dependencies
-      dnf:
-        name:
-          - curl
-          - iproute-tc
-          - pip
-          - containerd
-        state: present
-
-    - name: Configure containerd prerequisites
+    - name: Update kubeadm images
       shell: |
-        cat << EOF | tee /etc/modules-load.d/k8s.conf
-        overlay
-        br_netfilter
-        EOF
-        modprobe overlay
-        modprobe br_netfilter
-
-    - name: Configure kernel parameters for Kubernetes
-      shell: |
-        cat << EOF | tee /etc/sysctl.d/k8s.conf
-        net.bridge.bridge-nf-call-iptables = 1
-        net.bridge.bridge-nf-call-ip6tables = 1
-        net.ipv4.ip_forward = 1
-        sysctl --system
-
-    - name: Create containerd directory
-      file:
-        path: /etc/containerd
-        state: directory
-        mode: '0755'
-
-    - name: Install containerd
-      shell: |
-        containerd config default | tee /etc/containerd/config.toml
-        sed -i 's/SystemdCgroup = false/SystemCgroup = true/g' /etc/containerd/config.toml
-
-    - name: Restart containerd
-      systemd:
-        name: containerd
-        state: restarted
-        enabled: yes
-
-    - name: Add Kubernetes repo
-      shell: |
-        cat << EOF | tee /etc/yum.repos.d/kubernetes.repo
-        [kubernetes]
-        name=Kubernetes
-        baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-e17-\$basearch
-        enabled=1
-        gpgcheck=1
-        gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-        exclude=kubelet kubeadm kubectl
-        EOF
-
-    - name: Install Kubernetes packages
-      dnf:
-        name:
-          - kubelet
-          - kubeadm
-          - kubectl
-        state: present
-        disable_excludes: kubernetes
-
-    - name: Use kubelet
-      systemd:
-        name: kubelet
-        enabled: yes
-        state: started
-
+        kubeadm config images pull
+      changed_when: false
 
     - name: Initialize Kubernetes cluster
       shell: |
-        kubeadm init --pod-network-cidr=192.168.0.0/16 --ignore-prefilght-errors=NumCPU
+        kubeadm init --apiserver-advertise-address={{ ansible_master_host }} --pod-network-cidr={{ ansible_pod_network_cidr }} # --ignore-preflight-errors=NumCPU
       args:
         creates: /etc/kubernetes/admin.conf
     
     - name: Create .kube directory
       file:
-        path: /root/.kube
+        path: "{{ ansible_home_dir }}/.kube"
         state: directory
-        mode: '0755'
 
-    - name: Coopy admin.conf to root's kube config
+    - name: Copy admin.conf to root's kube config
       copy:
         src: /etc/kubernetes/admin.conf
-        dest: /root/.kube/config
+        dest: "{{ ansible_home_dir }}/.kube/config"
         remote_src: yes
-        owner: root
-        group: root
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
         mode: '0600'
-    
-    - name: Install Calico network plugin
-      shell: kubectl apply =-f https://docs.projectcalico.org/manifests/calico.yaml
-      args:
-        creates: /etc/cni/net.d/calico-kubeconfig
 
-    - name: Get join command
-      shell: kubeadm token create --print-join-command
-      register: join_command
+    - name: Install Python3 Kubernetes module
+      pip:
+        name: kubernetes
+        state: present
+      changed_when: false
 
-    - name: Store join command
-      set_fact:
-        join_command: "{{ join_command.stdout }}"
+    - name: Get calico-system pods status
+      shell: |
+        kubectl get pods -n calico-system
+      register: calico_system_pods_status
+
+    - name: Display calico-system pods
+      debug:
+        var: calico_system_pods_status.stdout_lines
+
+    - name: Download Helm install script
+      get_url:
+        url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        dest: /tmp/get_helm.sh
+        mode: '0700'
+      changed_when: false
+
+    - name: Execute Helm installation script
+      shell: |
+        /tmp/get_helm.sh
+
+    - name: Add helm repos
+      kubernetes.core.helm_repository:
+        name: "{{ item.name }}"
+        repo_url: "{{ item.repo_url }}"
+      loop:
+        - { name: 'bitnami', repo_url: 'https://charts.bitnami.com/bitnami' }
+        - { name: 'projectcalico', repo_url: 'https://docs.tigera.io/calico/charts' }
+        - { name: 'kubernetes-dashboard', repo_url: 'https://kubernetes.github.io/dashboard/' }
+        - { name: 'metrics-server', repo_url: 'https://kubernetes-sigs.github.io/metrics-server/' }
+        - { name: 'ingress-nginx', repo_url: 'https://kubernetes.github.io/ingress-nginx' }
+      changed_when: false
+
+    - name: Deploy Helm charts
+      kubernetes.core.helm:
+        kubeconfig: "{{ ansible_home_dir }}/.kube/config"
+        name: "{{ item.name }}"
+        chart_ref: "{{ item.chart_ref }}"
+        release_namespace: "{{ item.namespace }}"
+        create_namespace: true
+      loop:
+        - { name: 'calico', chart_ref: 'projectcalico/tigera-operator', namespace: 'tigera-operator' }
+        - { name: 'kubernetes-dashboard', chart_ref: 'kubernetes-dashboard/kubernetes-dashboard', namespace: 'kubernetes-dashboard' }
+        - { name: 'metrics-server', chart_ref: 'metrics-server/metrics-server', namespace: 'kube-system' }
+        - { name: 'ingress-nginx', chart_ref: 'ingress-nginx/ingress-nginx', namespace: 'ingress-nginx' }
+      changed_when: false

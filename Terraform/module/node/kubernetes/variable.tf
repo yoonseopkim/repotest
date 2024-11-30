@@ -1,13 +1,3 @@
-variable "vpc_id" {
-  description = "ID of the VPC"
-  type        = string
-}
-
-variable "public_subnet_cidrs" {
-  description = "CIDR blocks of the public subnets"
-  type        = list(string)
-}
-
 variable "private_subnet_ids" {
   description = "IDs of the private subnets"
   type        = list(string)
@@ -28,11 +18,6 @@ variable "ami_id" {
   type        = string
 }
 
-variable "ssh_keys" {
-  description = "EC2 SSH access key names"
-  type        = map(string)
-}
-
 variable "private_ips" {
   description = "Private IPs for subnets"
   type        = map(string)
@@ -46,13 +31,6 @@ variable "security_group_ids" {
 variable "iam_instance_profile" {
   description = "IAM instance profile"
   type        = string
-}
-
-# 쿠버관련 변수추가
-
-variable "private_subnet_cidrs" {
-  description = "CIDR blocks of the private subnets"
-  type        = list(string)
 }
 
 variable "worker_count" {
