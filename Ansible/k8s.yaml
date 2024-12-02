@@ -14,12 +14,10 @@
           - pip
           - containerd
         state: present
-      changed_when: false
 
     - name: Disable swap
       shell: |
         swapoff -a
-      changed_when: false
 
     - name: Configure Kubernetes prerequisites
       copy:
@@ -73,14 +71,6 @@
         enabled: yes
         daemon_reload: yes
 
-    # - name: Get containerd status 
-    #   shell: systemctl status containerd
-    #   register: countainerd_status
-
-    # - name: Display containerd status
-    #   debug:
-    #     var: countainerd_status.stdout_lines
-
     - name: Add Kubernetes repo
       yum_repository:
         name: kubernetes
@@ -95,13 +85,11 @@
           - kubectl
           - cri-tools
           - kubernetes-cni
-      changed_when: false
 
     - name: Set SELinux mode to permissive
       selinux:
         policy: targeted
         state: permissive
-      changed_when: false
 
     - name: Replace SELinux mode to permissive
       lineinfile:
@@ -109,7 +97,6 @@
         regexp: '^SELINUX=enforcing'
         line: 'SELINUX=permissive'
         state: present
-      changed_when: false
 
     - name: Update system
       dnf:
@@ -124,7 +111,6 @@
           - kubectl
         state: present
         disable_excludes: kubernetes
-      changed_when: false
 
     - name: Hold Kubernetes packages version
       community.general.dnf_versionlock:
@@ -133,7 +119,6 @@
           - kubeadm
           - kubectl
         state: present
-      changed_when: false
         
     - name: Start and enable kubelet
       systemd:
