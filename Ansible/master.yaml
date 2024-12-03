@@ -4,11 +4,10 @@
     - name: Update kubeadm images
       shell: |
         kubeadm config images pull
-      changed_when: false
 
     - name: Initialize Kubernetes cluster
       shell: |
-        kubeadm init --apiserver-advertise-address={{ ansible_master_host }} --pod-network-cidr={{ ansible_pod_network_cidr }} # --ignore-preflight-errors=NumCPU
+        kubeadm init --apiserver-advertise-address={{ ansible_master_host }} --pod-network-cidr={{ ansible_pod_network_cidr }}
       args:
         creates: /etc/kubernetes/admin.conf
     
@@ -30,41 +29,26 @@
       pip:
         name: kubernetes
         state: present
-      changed_when: false
-
-    - name: Get calico-system pods status
-      shell: |
-        kubectl get pods -n calico-system
-      register: calico_system_pods_status
-
-    - name: Display calico-system pods
-      debug:
-        var: calico_system_pods_status.stdout_lines
 
     - name: Download Helm install script
       get_url:
         url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
         dest: /tmp/get_helm.sh
         mode: '0700'
-      changed_when: false
 
     - name: Execute Helm installation script
       shell: |
         /tmp/get_helm.sh
-
-    - name: Add helm repos
+    
+    - name: Add helm charts 
+      become: no
       kubernetes.core.helm_repository:
         name: "{{ item.name }}"
         repo_url: "{{ item.repo_url }}"
-      loop:
-        - { name: 'bitnami', repo_url: 'https://charts.bitnami.com/bitnami' }
-        - { name: 'projectcalico', repo_url: 'https://docs.tigera.io/calico/charts' }
-        - { name: 'kubernetes-dashboard', repo_url: 'https://kubernetes.github.io/dashboard/' }
-        - { name: 'metrics-server', repo_url: 'https://kubernetes-sigs.github.io/metrics-server/' }
-        - { name: 'ingress-nginx', repo_url: 'https://kubernetes.github.io/ingress-nginx' }
-      changed_when: false
+      loop: "{{ ansible_helm_charts }}"
 
-    - name: Deploy Helm charts
+    - name: Deploy Calico System
+      become: no
       kubernetes.core.helm:
         kubeconfig: "{{ ansible_home_dir }}/.kube/config"
         name: "{{ item.name }}"
@@ -72,8 +56,20 @@
         release_namespace: "{{ item.namespace }}"
         create_namespace: true
       loop:
-        - { name: 'calico', chart_ref: 'projectcalico/tigera-operator', namespace: 'tigera-operator' }
-        - { name: 'kubernetes-dashboard', chart_ref: 'kubernetes-dashboard/kubernetes-dashboard', namespace: 'kubernetes-dashboard' }
-        - { name: 'metrics-server', chart_ref: 'metrics-server/metrics-server', namespace: 'kube-system' }
-        - { name: 'ingress-nginx', chart_ref: 'ingress-nginx/ingress-nginx', namespace: 'ingress-nginx' }
-      changed_when: false
+        - name: projectcalico
+          repo_url: https://docs.tigera.io/calico/charts
+          chart_ref: projectcalico/tigera-operator
+          namespace: tigera-operator
+
+# - name: Install Helm packages
+#   hosts: master
+#   become: no
+#   tasks:
+#     - name: Deploy Helm charts
+#       kubernetes.core.helm:
+#         kubeconfig: "{{ ansible_home_dir }}/.kube/config"
+#         name: "{{ item.name }}"
+#         chart_ref: "{{ item.chart_ref }}"
+#         release_namespace: "{{ item.namespace }}"
+#         create_namespace: true
+#       loop: "{{ ansible_helm_charts }}"

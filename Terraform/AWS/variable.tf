@@ -122,6 +122,11 @@ variable "lb_type" {
   type        = string
 }
 
+variable "idle_timeout" {
+  description = "Idle timeout for load balancer"
+  type        = number
+}
+
 variable "delete_protection" {
   description = "Delete protection of load balancer"
   type        = bool
@@ -178,9 +183,14 @@ variable "health_unthreshold" {
 }
 
 // ECR 변수
+variable "ecr_namespace_name" {
+  description  = "Namespace of the ECR repository"
+  type         = string
+}
+
 variable "ecr_repo_name" {
   description  = "Name of the ECR repository"
-  type         = string
+  type         = list(string)
 }
 
 variable "tag_mutability" {
@@ -202,6 +212,12 @@ variable "policy_countNum" {
   description  = "Count number of ECR lifecycle policy"
   type         = number
 }
+
+variable "ecr_index" {
+  description = "Index of ECR"
+  type        = number
+}
+
 
 variable "kubernetes_config" {
   type = object({

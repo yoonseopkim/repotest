@@ -151,6 +151,7 @@ module "gitfolio_alb" {
 
   route53_domain       = var.route53_domain
   lb_type              = var.lb_type
+  idle_timeout         = var.idle_timeout
   delete_protection    = var.delete_protection
   target_port          = var.target_port
   target_protocol      = var.target_protocol
@@ -179,12 +180,14 @@ module "gitfolio_route53" {
 
 // Container
 module "gitfolio_ecr" {
-  source           = "./module/ECR"
-  count            = local.shared ? 0 : 1
+  source             = "./module/ECR"
+  count              = local.shared ? 8 : 0
   
-  ecr_repo_name    = var.ecr_repo_name
-  tag_mutability   = var.tag_mutability
-  policy_tagStatus = var.policy_tagStatus
-  policy_countType = var.policy_countType
-  policy_countNum  = var.policy_countNum
+  ecr_index          = count.index
+  ecr_namespace_name = var.ecr_namespace_name
+  ecr_repo_name      = var.ecr_repo_name
+  tag_mutability     = var.tag_mutability
+  policy_tagStatus   = var.policy_tagStatus
+  policy_countType   = var.policy_countType
+  policy_countNum    = var.policy_countNum
 }
