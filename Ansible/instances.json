@@ -1,7 +1,7 @@
 [
   {
     "Name": "Gitfolio Kubernetes master node",
-    "InstanceId": "i-094aabe9718a83f53",
+    "InstanceId": "i-020d82fef878cc4e3",
     "IP": "10.0.103.6",
     "Service": "master",
     "Type": "kubernetes",
@@ -9,7 +9,7 @@
   },
   {
     "Name": "Gitfolio Kubernetes worker node0",
-    "InstanceId": "i-031ee2d110d3de86d",
+    "InstanceId": "i-0e8c9909124498fe1",
     "IP": "10.0.103.8",
     "Service": "worker",
     "Type": "kubernetes",
@@ -17,7 +17,7 @@
   },
   {
     "Name": "Gitfolio Kubernetes worker node1",
-    "InstanceId": "i-0bb3c98aade8baa68",
+    "InstanceId": "i-05a4d413021d83f6d",
     "IP": "10.0.103.9",
     "Service": "worker",
     "Type": "kubernetes",

@@ -4,9 +4,10 @@
     - name: Update kubeadm images
       shell: |
         kubeadm config images pull
+
     - name: Initialize Kubernetes cluster
       shell: |
-        kubeadm init --apiserver-advertise-address={{ ansible_master_host }} --pod-network-cidr={{ ansible_pod_network_cidr }} # --ignore-preflight-errors=NumCPU
+        kubeadm init --apiserver-advertise-address={{ ansible_master_host }} --pod-network-cidr={{ ansible_pod_network_cidr }}
       args:
         creates: /etc/kubernetes/admin.conf
     
@@ -38,22 +39,37 @@
     - name: Execute Helm installation script
       shell: |
         /tmp/get_helm.sh
-
-- name: Install Helm packages
-  hosts: master
-  become: no
-  tasks:
-    - name: Add helm repos
+    
+    - name: Add helm charts 
+      become: no
       kubernetes.core.helm_repository:
         name: "{{ item.name }}"
         repo_url: "{{ item.repo_url }}"
       loop: "{{ ansible_helm_charts }}"
 
-    - name: Deploy Helm charts
+    - name: Deploy Calico System
+      become: no
       kubernetes.core.helm:
         kubeconfig: "{{ ansible_home_dir }}/.kube/config"
         name: "{{ item.name }}"
         chart_ref: "{{ item.chart_ref }}"
         release_namespace: "{{ item.namespace }}"
         create_namespace: true
-      loop: "{{ ansible_helm_charts }}"
+      loop:
+        - name: projectcalico
+          repo_url: https://docs.tigera.io/calico/charts
+          chart_ref: projectcalico/tigera-operator
+          namespace: tigera-operator
+
+# - name: Install Helm packages
+#   hosts: master
+#   become: no
+#   tasks:
+#     - name: Deploy Helm charts
+#       kubernetes.core.helm:
+#         kubeconfig: "{{ ansible_home_dir }}/.kube/config"
+#         name: "{{ item.name }}"
+#         chart_ref: "{{ item.chart_ref }}"
+#         release_namespace: "{{ item.namespace }}"
+#         create_namespace: true
+#       loop: "{{ ansible_helm_charts }}"

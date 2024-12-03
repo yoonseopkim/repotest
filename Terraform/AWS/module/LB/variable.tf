@@ -23,6 +23,11 @@ variable "lb_type" {
   type        = string
 }
 
+variable "idle_timeout" {
+  description = "Idle timeout for load balancer"
+  type        = number
+}
+
 variable "delete_protection" {
   description = "Delete protection of load balancer"
   type        = bool
